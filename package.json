@@ -1,0 +1,30 @@
+{
+  "name": "fjordfursbot",
+  "version": "0.1.0",
+  "description": "A Discord bot for the FjordFurs server",
+  "main": "out/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KHTangent/fjordfursbot.git"
+  },
+  "keywords": [
+    "discord",
+    "typescript"
+  ],
+  "author": "KHTangent",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KHTangent/fjordfursbot/issues"
+  },
+  "homepage": "https://github.com/KHTangent/fjordfursbot#readme",
+  "dependencies": {
+    "@types/ws": "^7.2.2",
+    "discord.js": "^12.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^13.9.1"
+  }
+}
