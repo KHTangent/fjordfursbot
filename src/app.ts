@@ -1,5 +1,4 @@
 import Discord = require("discord.js");
-import { readFileSync } from "fs";
 
 import { ConfigLoader } from "./ConfigLoader";
 
@@ -42,7 +41,7 @@ bot.on("message", (msg:Discord.Message) => {
 			}
 			servers.get(msg.guild!.id)!.welcomeChannelId = id;
 			msg.channel.send(`Welcome message channel set to <#${id}>`);
-			// ConfigLoader.writeServerConfig(servers);
+			ConfigLoader.writeServerConfig(servers);
 		}).catch(() => {
 			msg.channel.send("Unable to get channel with this id.");
 		});
@@ -59,7 +58,7 @@ bot.on("message", (msg:Discord.Message) => {
 		var message = msg.content.substring(`${config.prefix}greeting message`.length+1).trim();
 		servers.get(msg.guild!.id)!.welcomeMessage = message;
 		msg.channel.send(`Welcome message set.`);
-		// ConfigLoader.writeServerConfig(servers);
+		ConfigLoader.writeServerConfig(servers);
 	}
 });
 
