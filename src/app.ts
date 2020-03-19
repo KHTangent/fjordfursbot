@@ -69,7 +69,7 @@ bot.on("guildMemberAdd", (member:Discord.GuildMember) => {
 		bot.channels.fetch(serverConfig.welcomeChannelId).then((channel:Discord.Channel) => {
 			if (channel.type != "text") return;
 			var textChannel = channel as Discord.TextChannel;
-			textChannel.send(serverConfig.welcomeMessage!.replace("{user}", "<@"+member.user.id+">"));
+			textChannel.send(serverConfig.welcomeMessage!.replace(/{user}/g, "<@"+member.user.id+">"));
 		});
 	}
 });
