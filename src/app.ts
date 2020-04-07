@@ -1,6 +1,7 @@
 import Discord = require("discord.js");
 
 import { ConfigLoader } from "./ConfigLoader";
+import { CommandHandler } from "./CommandHandler";
 
 console.log("Starting FjordFursBot...")
 
@@ -15,6 +16,9 @@ console.log("Loaded server configs.");
 console.log("Connecting to Discord...");
 const bot = new Discord.Client();
 
+const commandHanlder = new CommandHandler(bot, config);
+
+
 bot.on("ready", () => {
 	console.log("Connected to Discord.");
 });
@@ -24,47 +28,26 @@ bot.on("message", (msg:Discord.Message) => {
 		msg.channel.send("Hello " + msg.author.username + "!");
 	}
 
-	if (msg.member && msg.content.startsWith(`${config.prefix}greeting channel`)) {
-		if (!msg.member.hasPermission("ADMINISTRATOR")) {
-			msg.channel.send("You need to be an administrator to use that command.");
-			return;
-		}
-		if (!servers.has(msg.guild!.id)) {
-			servers.set(msg.guild!.id, {});
-		}
-		var id = msg.content.substring(`${config.prefix}greeting channel`.length+1).trim();
-		// Check if id is a text channel
-		bot.channels.fetch(id).then((channel:Discord.Channel) => {
-			if (channel.type != "text") {
-				msg.channel.send("Must be a text channel.");
-				return;
-			}
-			servers.get(msg.guild!.id)!.welcomeChannelId = id;
-			msg.channel.send(`Welcome message channel set to <#${id}>`);
-			ConfigLoader.writeServerConfig(servers);
-		}).catch(() => {
-			msg.channel.send("Unable to get channel with this id.");
-		});
+	if (msg.content.startsWith(`${config.prefix}greeting channel`)) {
+		commandHanlder.setGreetingChannel(msg, servers);
 	}
 
-	if (msg.member && msg.content.startsWith(`${config.prefix}greeting message`)) {
-		if (!msg.member.hasPermission("ADMINISTRATOR")) {
-			msg.channel.send("You need to be an administrator to use that command.");
-			return;
-		}
-		if (!servers.has(msg.guild!.id)) {
-			servers.set(msg.guild!.id, {});
-		}
-		var message = msg.content.substring(`${config.prefix}greeting message`.length+1).trim();
-		servers.get(msg.guild!.id)!.welcomeMessage = message;
-		msg.channel.send(`Welcome message set.`);
-		ConfigLoader.writeServerConfig(servers);
+	if (msg.content.startsWith(`${config.prefix}greeting message`)) {
+		commandHanlder.setGreetingMessage(msg, servers);
+	}
+
+	if (msg.content.startsWith(`${config.prefix}goodbye channel`)) {
+		commandHanlder.setGoodbyeChannel(msg, servers);
+	}
+
+	if (msg.content.startsWith(`${config.prefix}goodbye message`)) {
+		commandHanlder.setGoodbyeMessage(msg, servers);
 	}
 });
 
 bot.on("guildMemberAdd", (member:Discord.GuildMember) => {
 	if (!servers.has(member.guild.id)) return;
-	var serverConfig = servers.get(member.guild.id) as ServerConfig;
+	var serverConfig = servers.get(member.guild.id) as ServerConfig; // Convinces ts that it's not undefined
 	if (serverConfig.welcomeChannelId && serverConfig.welcomeMessage) {
 		bot.channels.fetch(serverConfig.welcomeChannelId).then((channel:Discord.Channel) => {
 			if (channel.type != "text") return;
@@ -73,5 +56,18 @@ bot.on("guildMemberAdd", (member:Discord.GuildMember) => {
 		});
 	}
 });
+
+bot.on("guildMemberRemove", (member:Discord.GuildMember) => {
+	if (!servers.has(member.guild.id)) return;
+	var serverConfig = servers.get(member.guild.id) as ServerConfig;
+	if (serverConfig.goodbyeChannelId && serverConfig.welcomeMessage) {
+		bot.channels.fetch(serverConfig.goodbyeChannelId).then((channel:Discord.Channel) => {
+			if (channel.type != "text") return;
+			var textChannel = channel as Discord.TextChannel;
+			textChannel.send(serverConfig.goodbyeMessage!.replace(/{user}/g, member.user.username));
+		});
+	}
+});
+
 
 bot.login(config.token);
