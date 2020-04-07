@@ -7,13 +7,16 @@ more features might be added later. Please open an issue if you find a bug or ha
 
 ## Currently supported features
 - Greet new members with a custom message
- 
+- Send a message when a user leaves
+
 ----------
 
 ## Current commands
 If you set a custom prefix, replace "+" with your prefix for the commands below.
 - `+greeting channel [id]` Set what channel to greet new users in
 - `+greeting message [message]` Set a message to greet users with. Replaces `{user}` with a mention of the new user.
+- `+goodbye channel [id]` Set what channel to send a message when someone leaves
+- `+goodbye message [message]` Set a message to send when someone leaves the server. Replaces `{user}` with the name of the user who left.
  
 ----------
 
