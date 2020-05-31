@@ -24,24 +24,45 @@ bot.on("ready", () => {
 });
 
 bot.on("message", (msg:Discord.Message) => {
-	if (msg.content == "Hey FjordFursBot!") {
+	if (!msg.content.startsWith(config.prefix)) return;
+	
+	if (msg.content == `${config.prefix}ping`) {
 		msg.channel.send("Hello " + msg.author.username + "!");
 	}
 
-	if (msg.content.startsWith(`${config.prefix}greeting channel`)) {
+	else if (msg.content.startsWith(`${config.prefix}greeting channel`)) {
 		commandHanlder.setGreetingChannel(msg, servers);
 	}
 
-	if (msg.content.startsWith(`${config.prefix}greeting message`)) {
+	else if (msg.content.startsWith(`${config.prefix}greeting message`)) {
 		commandHanlder.setGreetingMessage(msg, servers);
 	}
 
-	if (msg.content.startsWith(`${config.prefix}goodbye channel`)) {
+	else if (msg.content.startsWith(`${config.prefix}goodbye channel`)) {
 		commandHanlder.setGoodbyeChannel(msg, servers);
 	}
 
-	if (msg.content.startsWith(`${config.prefix}goodbye message`)) {
+	else if (msg.content.startsWith(`${config.prefix}goodbye message`)) {
 		commandHanlder.setGoodbyeMessage(msg, servers);
+	}
+
+	else if (msg.content.startsWith(`${config.prefix}modmailset servername`)) {
+		commandHanlder.setModmailServerName(msg, servers);
+	}
+
+	else if (msg.content.startsWith(`${config.prefix}modmailset channel`)) {
+		commandHanlder.setModmailChannel(msg, servers);
+	}
+
+	else if (msg.content.startsWith(`${config.prefix}modmail`)) {
+		commandHanlder.sendModmail(msg, servers);
+	}
+
+	else if (msg.content.startsWith(`${config.prefix}reload`)) {
+		if (msg.member && msg.member.hasPermission("ADMINISTRATOR")) {
+			servers = ConfigLoader.getServerConfig();
+			msg.channel.send("Config reloaded");
+		}
 	}
 });
 

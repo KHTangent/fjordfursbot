@@ -3,4 +3,6 @@ interface ServerConfig {
 	welcomeChannelId?:string;
 	goodbyeMessage?:string;
 	goodbyeChannelId?:string;
+	modmailServerName?:string;
+	modmailChannelId?:string;
 }
