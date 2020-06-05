@@ -32,6 +32,7 @@ bot.on("message", (msg:Discord.Message) => {
 
 	else if (msg.content.startsWith(`${config.prefix}greeting channel`)) {
 		commandHanlder.setGreetingChannel(msg, servers);
+		
 	}
 
 	else if (msg.content.startsWith(`${config.prefix}greeting message`)) {
@@ -56,6 +57,26 @@ bot.on("message", (msg:Discord.Message) => {
 
 	else if (msg.content.startsWith(`${config.prefix}modmail`)) {
 		commandHanlder.sendModmail(msg, servers);
+	}
+
+	else if (msg.content.startsWith(`${config.prefix}addselfassignrole`)) {
+		commandHanlder.addSelfAssignRole(msg, servers);
+	}
+
+	else if (msg.content.startsWith(`${config.prefix}removeselfassignrole`)) {
+		commandHanlder.removeSelfAssignRole(msg, servers);
+	}
+
+	else if (msg.content.startsWith(`${config.prefix}listroles`)) {
+		commandHanlder.listRoles(msg, servers);
+	}
+
+	else if (msg.content.startsWith(`${config.prefix}getrole`)) {
+		commandHanlder.getRole(msg, servers);
+	}
+
+	else if (msg.content.startsWith(`${config.prefix}takerole`)) {
+		commandHanlder.takeRole(msg, servers);
 	}
 
 	else if (msg.content.startsWith(`${config.prefix}reload`)) {

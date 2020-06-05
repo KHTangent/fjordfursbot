@@ -20,6 +20,11 @@ If you set a custom prefix, replace "+" with your prefix for the commands below.
 - `+goodbye message [message]` Set a message to send when someone leaves the server. Replaces `{user}` with the name of the user who left.
 - `+modmailset channel [id]` Set what channel modmails should be forwarded to
 - `+modmailset servername [name]` Set what name people should use to send modmail to this server
+- `+addselfassignrole [id]` Makes a role self-assignable for users using the `+getrole`-command
+- `+removeselfassignrole [id]` Removes a role from being self-assignable
+- `+listroles` Lists self-assignable roles for this server
+- `+getrole [name]` Gives you a role that has been made self-assignable. Note the use of name, not ID
+- `+takerole [name]` Removes a self-assignable role
 - `+modmail [servername] [message]` Sends an anonymous modmail (must be used in DM)
  
 ----------

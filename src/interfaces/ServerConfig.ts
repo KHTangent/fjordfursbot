@@ -5,4 +5,10 @@ interface ServerConfig {
 	goodbyeChannelId?:string;
 	modmailServerName?:string;
 	modmailChannelId?:string;
+	selfAssignableRoles?:Array<RoleNameID>;
+}
+
+interface RoleNameID {
+	name: string;
+	id: string;
 }

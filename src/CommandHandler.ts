@@ -12,13 +12,13 @@ export class CommandHandler {
 	}
 
 	setGreetingChannel(msg:Discord.Message, servers:Map<string, ServerConfig>) {
-		if (!msg.member) return;
-		if (!msg.member.hasPermission("ADMINISTRATOR")) {
+		if (!msg.guild) return;
+		if (!msg.member!.hasPermission("ADMINISTRATOR")) {
 			msg.channel.send("You need to be an administrator to use that command.");
 			return;
 		}
-		if (!servers.has(msg.guild!.id)) {
-			servers.set(msg.guild!.id, {});
+		if (!servers.has(msg.guild.id)) {
+			servers.set(msg.guild.id, {});
 		}
 		var id = msg.content.substring(`${this.botConfig.prefix}greeting channel`.length+1).trim();
 		// Check if id is a text channel
@@ -36,28 +36,28 @@ export class CommandHandler {
 	}
 
 	setGreetingMessage(msg:Discord.Message, servers:Map<string, ServerConfig>) {
-		if (!msg.member) return;
-		if (!msg.member.hasPermission("ADMINISTRATOR")) {
+		if (!msg.guild) return;
+		if (!msg.member!.hasPermission("ADMINISTRATOR")) {
 			msg.channel.send("You need to be an administrator to use that command.");
 			return;
 		}
-		if (!servers.has(msg.guild!.id)) {
-			servers.set(msg.guild!.id, {});
+		if (!servers.has(msg.guild.id)) {
+			servers.set(msg.guild.id, {});
 		}
 		var message = msg.content.substring(`${this.botConfig.prefix}greeting message`.length+1).trim();
-		servers.get(msg.guild!.id)!.welcomeMessage = message;
+		servers.get(msg.guild.id)!.welcomeMessage = message;
 		msg.channel.send(`Welcome message set.`);
 		ConfigLoader.writeServerConfig(servers);
 	}
 
 	setGoodbyeChannel(msg:Discord.Message, servers:Map<string, ServerConfig>) {
-		if (!msg.member) return;
-		if (!msg.member.hasPermission("ADMINISTRATOR")) {
+		if (!msg.guild) return;
+		if (!msg.member!.hasPermission("ADMINISTRATOR")) {
 			msg.channel.send("You need to be an administrator to use that command.");
 			return;
 		}
-		if (!servers.has(msg.guild!.id)) {
-			servers.set(msg.guild!.id, {});
+		if (!servers.has(msg.guild.id)) {
+			servers.set(msg.guild.id, {});
 		}
 		var id = msg.content.substring(`${this.botConfig.prefix}goodbye channel`.length+1).trim();
 		// Check if id is a text channel
@@ -75,28 +75,28 @@ export class CommandHandler {
 	}
 
 	setGoodbyeMessage(msg:Discord.Message, servers:Map<string, ServerConfig>) {
-		if (!msg.member) return;
-		if (!msg.member.hasPermission("ADMINISTRATOR")) {
+		if (!msg.guild) return;
+		if (!msg.member!.hasPermission("ADMINISTRATOR")) {
 			msg.channel.send("You need to be an administrator to use that command.");
 			return;
 		}
-		if (!servers.has(msg.guild!.id)) {
-			servers.set(msg.guild!.id, {});
+		if (!servers.has(msg.guild.id)) {
+			servers.set(msg.guild.id, {});
 		}
 		var message = msg.content.substring(`${this.botConfig.prefix}goodbye message`.length+1).trim();
-		servers.get(msg.guild!.id)!.goodbyeMessage = message;
+		servers.get(msg.guild.id)!.goodbyeMessage = message;
 		msg.channel.send(`Goodbye message set.`);
 		ConfigLoader.writeServerConfig(servers);
 	}
 
 	setModmailChannel(msg:Discord.Message, servers:Map<string, ServerConfig>) {
-		if (!msg.member) return;
-		if (!msg.member.hasPermission("ADMINISTRATOR")) {
+		if (!msg.guild) return;
+		if (!msg.member!.hasPermission("ADMINISTRATOR")) {
 			msg.channel.send("You need to be an administrator to use that command.");
 			return;
 		}
-		if (!servers.has(msg.guild!.id)) {
-			servers.set(msg.guild!.id, {});
+		if (!servers.has(msg.guild.id)) {
+			servers.set(msg.guild.id, {});
 		}
 		var id = msg.content.substring(`${this.botConfig.prefix}modmailset channel`.length+1).trim();
 		// Check if id is a text channel
@@ -114,13 +114,13 @@ export class CommandHandler {
 	}
 
 	setModmailServerName(msg:Discord.Message, servers:Map<string, ServerConfig>) {
-		if (!msg.member) return;
-		if (!msg.member.hasPermission("ADMINISTRATOR")) {
+		if (!msg.guild) return;
+		if (!msg.member!.hasPermission("ADMINISTRATOR")) {
 			msg.channel.send("You need to be an administrator to use that command.");
 			return;
 		}
-		if (!servers.has(msg.guild!.id)) {
-			servers.set(msg.guild!.id, {});
+		if (!servers.has(msg.guild.id)) {
+			servers.set(msg.guild.id, {});
 		}
 		var serverName = msg.content.substring(`${this.botConfig.prefix.length}modmailset servername`.length+1).trim();
 		if (serverName == "" || serverName.includes(" ")) {
@@ -128,7 +128,7 @@ export class CommandHandler {
 			return;
 		}
 		if (this.guildIdFromModmailName(serverName, servers) == "") {
-			servers.get(msg.guild!.id)!.modmailServerName = serverName;
+			servers.get(msg.guild.id)!.modmailServerName = serverName;
 			msg.channel.send("Modmail server name set.");
 			ConfigLoader.writeServerConfig(servers);
 		}
@@ -158,6 +158,121 @@ export class CommandHandler {
 		}
 	}
 
+	async addSelfAssignRole(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		if (!msg.guild) return;
+		if (!msg.member!.hasPermission("ADMINISTRATOR")) {
+			msg.channel.send("You need to be an administrator to use that command.");
+			return;
+		}
+		if (!servers.has(msg.guild.id)) {
+			servers.set(msg.guild.id, {});
+		}
+		var roleid = msg.content.substring(`${this.botConfig.prefix}addselfassignrole`.length+1).trim();
+		var role;
+		try {
+			role = await msg.guild.roles.fetch(roleid);
+		} catch (e) {
+			msg.channel.send("Error getting role with id " + roleid);
+		}
+		if (!role) {
+			msg.channel.send("Error getting role with id " + roleid);
+			return;
+		}
+		if (!servers.get(msg.guild.id)!.selfAssignableRoles) {
+			servers.get(msg.guild.id)!.selfAssignableRoles = [];
+		}
+		else {
+			// Verify that the role isn't there already
+			for (var grole of servers.get(msg.guild.id)!.selfAssignableRoles!) {
+				if (grole.id == role.id || grole.name == role.name.toLowerCase()) {
+					msg.channel.send("This role has already been added.");
+					return;
+				}
+			}
+		}
+		servers.get(msg.guild!.id)!.selfAssignableRoles!.push({
+			id: role.id,
+			name: role.name.toLowerCase()
+		});
+		ConfigLoader.writeServerConfig(servers);
+		msg.channel.send(`Role ${role.name} has been made self-assignable.`);
+	}
+
+	removeSelfAssignRole(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		if (!msg.guild) return;
+		if (!msg.member!.hasPermission("ADMINISTRATOR")) {
+			msg.channel.send("You need to be an administrator to use that command.");
+			return;
+		}
+		if (!servers.has(msg.guild.id)) {
+			servers.set(msg.guild.id, {});
+		}
+		if (!servers.get(msg.guild.id)!.selfAssignableRoles) {
+			msg.channel.send("This server does not have any self-assignable roles");
+		}
+		var roleid = msg.content.substring(`${this.botConfig.prefix}removeselfassignrole`.length+1).trim();
+		for (var i = 0; i < servers.get(msg.guild.id)!.selfAssignableRoles!.length; i++) {
+			if (servers.get(msg.guild.id)!.selfAssignableRoles![i].id == roleid) {
+				servers.get(msg.guild.id)!.selfAssignableRoles!.splice(i, 1);
+				msg.channel.send("Role removed");
+				ConfigLoader.writeServerConfig(servers);
+				return;
+			}
+		}
+		msg.channel.send("Role not found.");
+	}
+
+	listRoles(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		if (!msg.guild) return;
+		if (!servers.get(msg.guild.id) || !servers.get(msg.guild.id)!.selfAssignableRoles) {
+			msg.channel.send("This server does not have any self-assignable roles.");
+			return;
+		}
+		var listMessage = "List of self-assignable roles: ```" +
+			servers.get(msg.guild.id)!.selfAssignableRoles!.map(r => r.name).join(", ") + "```";
+		msg.channel.send(listMessage);
+	}
+
+	async getRole(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		if (!msg.guild) return;
+		if (!servers.get(msg.guild.id) || !servers.get(msg.guild.id)!.selfAssignableRoles) {
+			msg.channel.send("This server does not have any self-assignable roles.");
+			return;
+		}
+		var roleName = msg.content.substring(`${this.botConfig.prefix}getrole`.length+1).trim().toLowerCase();
+		var roleObject = servers.get(msg.guild.id)!.selfAssignableRoles!.find(r => r.name == roleName);
+		if (!roleObject) {
+			msg.channel.send("Role not found: `" + roleName + "`");
+			return;
+		}
+		try {
+			msg.member!.roles.add(roleObject.id, "Requested");
+			msg.react("☑");
+		} catch (e) {
+			msg.channel.send("Something went wrong while giving you the role.");
+		}
+	}
+
+	async takeRole(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		if (!msg.guild) return;
+		if (!servers.get(msg.guild.id) || !servers.get(msg.guild.id)!.selfAssignableRoles) {
+			msg.channel.send("This server does not have any self-assignable roles.");
+			return;
+		}
+		var roleName = msg.content.substring(`${this.botConfig.prefix}takerole`.length+1).trim().toLowerCase();
+		var roleObject = servers.get(msg.guild.id)!.selfAssignableRoles!.find(r => r.name == roleName);
+		if (!roleObject) {
+			msg.channel.send("Role not found: `" + roleName + "`");
+			return;
+		}
+		try {
+			msg.member!.roles.remove(roleObject.id, "Requested");
+			msg.react("☑");
+		} catch (e) {
+			msg.channel.send("Something went wrong while taking that role.");
+		}
+	}
+	
 	private guildIdFromModmailName(name:string, servers:Map<string, ServerConfig>):string {
 		var gID = "";
 		servers.forEach((val, key) => {
