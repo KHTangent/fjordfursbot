@@ -11,6 +11,41 @@ export class CommandHandler {
 		this.botConfig = botConfig;
 	}
 
+	help(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		var helpMessage = "List of commands: \n" +
+			`\`${this.botConfig.prefix}help\` Displays this help message \n` +
+			`\`${this.botConfig.prefix}about\` Displays info about this bot \n` +
+			`\`${this.botConfig.prefix}listroles\` Gives a list of self-assignable roles \n` +
+			`\`${this.botConfig.prefix}getrole [rolename]\` Gives you a self-assignable role \n` +
+			`\`${this.botConfig.prefix}takerole [rolename]\` Takes away a self-assignable role \n`;
+		if (msg.guild && servers.has(msg.guild.id) && servers.get(msg.guild.id)!.modmailServerName) {
+			helpMessage += `\`${this.botConfig.prefix}modmail ${servers.get(msg.guild.id)!.modmailServerName!} [message]\`` +
+				` (SEND THIS AS A DIRECT MESSAGE TO THE BOT) Sends a modmail`;
+		}
+		if (msg.member && msg.member.hasPermission("ADMINISTRATOR")) {
+			helpMessage += 
+			`\`${this.botConfig.prefix}greeting channel [id]\` Set what channel to greet new users in\n` +
+			`\`${this.botConfig.prefix}greeting message [message]\` Set a message to greet users with. Replaces \`{user}\` with a mention of the new user.\n` +
+			`\`${this.botConfig.prefix}goodbye channel [id]\` Set what channel to send a message when someone leaves\n` +
+			`\`${this.botConfig.prefix}goodbye message [message]\` Set a message to send when someone leaves the server. Replaces \`{user}\` with the name of the user who left.\n` +
+			`\`${this.botConfig.prefix}modmailset channel [id]\` Set what channel modmails should be forwarded to\n` +
+			`\`${this.botConfig.prefix}modmailset servername [name]\` Set what name people should use to send modmail to this server\n` +
+			`\`${this.botConfig.prefix}addselfassignrole [id]\` Makes a role self-assignable for users using the \`${this.botConfig.prefix}getrole\`-command\n` +
+			`\`${this.botConfig.prefix}removeselfassignrole [id]\` Removes a role from being self-assignable`
+		}
+		msg.channel.send(helpMessage);
+	}
+
+	about(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		msg.channel.send(
+			"Hello, I'm **FjordFursBot**!\n" +
+			"By KHTangent\n" +
+			"Licenced under the MIT Licence.\n" + 
+			"<https://github.com/KHTangent/FjordFursBot>\n" + 
+			"Version 0.3.1"
+		);
+	}
+
 	setGreetingChannel(msg:Discord.Message, servers:Map<string, ServerConfig>) {
 		if (!msg.guild) return;
 		if (!msg.member!.hasPermission("ADMINISTRATOR")) {

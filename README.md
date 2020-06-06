@@ -14,6 +14,8 @@ more features might be added later. Please open an issue if you find a bug or ha
 
 ## Current commands
 If you set a custom prefix, replace "+" with your prefix for the commands below.
+- `+help` Gives a list of commands
+- `+about` Shows information about the bot
 - `+greeting channel [id]` Set what channel to greet new users in
 - `+greeting message [message]` Set a message to greet users with. Replaces `{user}` with a mention of the new user.
 - `+goodbye channel [id]` Set what channel to send a message when someone leaves

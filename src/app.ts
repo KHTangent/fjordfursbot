@@ -30,9 +30,16 @@ bot.on("message", (msg:Discord.Message) => {
 		msg.channel.send("Hello " + msg.author.username + "!");
 	}
 
+	else if (msg.content == `${config.prefix}help`) {
+		commandHanlder.help(msg, servers);
+	}
+
+	else if (msg.content == `${config.prefix}about`) {
+		commandHanlder.about(msg, servers);
+	}
+
 	else if (msg.content.startsWith(`${config.prefix}greeting channel`)) {
 		commandHanlder.setGreetingChannel(msg, servers);
-		
 	}
 
 	else if (msg.content.startsWith(`${config.prefix}greeting message`)) {
