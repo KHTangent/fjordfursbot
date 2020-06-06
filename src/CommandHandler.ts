@@ -23,7 +23,7 @@ export class CommandHandler {
 				` (SEND THIS AS A DIRECT MESSAGE TO THE BOT) Sends a modmail`;
 		}
 		if (msg.member && msg.member.hasPermission("ADMINISTRATOR")) {
-			helpMessage += 
+			helpMessage += "\n" + 
 			`\`${this.botConfig.prefix}greeting channel [id]\` Set what channel to greet new users in\n` +
 			`\`${this.botConfig.prefix}greeting message [message]\` Set a message to greet users with. Replaces \`{user}\` with a mention of the new user.\n` +
 			`\`${this.botConfig.prefix}goodbye channel [id]\` Set what channel to send a message when someone leaves\n` +
