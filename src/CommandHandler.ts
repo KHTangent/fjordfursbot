@@ -13,6 +13,7 @@ export class CommandHandler {
 
 	help(msg:Discord.Message, servers:Map<string, ServerConfig>) {
 		var helpMessage = "List of commands: \n" +
+			`\`${this.botConfig.prefix}uwu {text}\` Translates the message above, or the provided text into uwuspeech \n` +
 			`\`${this.botConfig.prefix}help\` Displays this help message \n` +
 			`\`${this.botConfig.prefix}about\` Displays info about this bot \n` +
 			`\`${this.botConfig.prefix}listroles\` Gives a list of self-assignable roles \n` +
@@ -306,6 +307,26 @@ export class CommandHandler {
 		} catch (e) {
 			msg.channel.send("Something went wrong while taking that role.");
 		}
+	}
+
+	async uwu(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		var toUwuize = "";
+		if (msg.content.length == `${this.botConfig.prefix}uwu`.length) {
+			try {
+				var messages = await msg.channel.messages.fetch({limit: 2});
+				toUwuize = messages.last()!.content;
+			} catch (e) {
+				msg.channel.send("Something went wrong");
+				return;
+			}
+		}
+		else {
+			toUwuize = msg.content.substring(`${this.botConfig.prefix}uwu `.length).trim();
+		}
+		toUwuize = toUwuize.replace(/r/g, "w").replace(/R/g, "w").replace(/l/g, "w").replace(/L/g, "W");
+		toUwuize = toUwuize.replace(/This/g, "Dis").replace(/this/g, "dis").replace(/That/g, "Dat").replace(/that/g, "dat");
+		toUwuize += " uwu";
+		msg.channel.send(toUwuize);
 	}
 	
 	private guildIdFromModmailName(name:string, servers:Map<string, ServerConfig>):string {

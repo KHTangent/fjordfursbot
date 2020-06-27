@@ -92,6 +92,10 @@ bot.on("message", (msg:Discord.Message) => {
 			msg.channel.send("Config reloaded");
 		}
 	}
+
+	else if (msg.content.startsWith(`${config.prefix}uwu`)) {
+		commandHanlder.uwu(msg, servers);
+	}
 });
 
 bot.on("guildMemberAdd", (member:Discord.GuildMember) => {
