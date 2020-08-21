@@ -38,6 +38,10 @@ bot.on("message", (msg:Discord.Message) => {
 		commandHanlder.about(msg, servers);
 	}
 
+	else if (msg.content == `${config.prefix}serverinfo`) {
+		commandHanlder.serverInfo(msg, servers);
+	}
+
 	else if (msg.content.startsWith(`${config.prefix}greeting channel`)) {
 		commandHanlder.setGreetingChannel(msg, servers);
 	}

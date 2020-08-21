@@ -47,6 +47,34 @@ export class CommandHandler {
 		);
 	}
 
+	async serverInfo(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		if (!msg.guild) {
+			msg.channel.send("Command must be used in a guild");
+			return;
+		}
+		let members: Discord.Collection<string, Discord.GuildMember>;
+		try {
+			members = await msg.guild.members.fetch();
+		}
+		catch {
+			msg.channel.send("Could not get member list");
+			return;
+		}
+		let created = msg.guild.createdAt.toUTCString();
+		let nonBots = members.filter(v => !v.user.bot).size;
+		let total = members.size;
+		let blanks = "                                 ";
+		msg.channel.send(
+			`Info about **${msg.guild.name}**` +
+			"```\n" +
+			"+------------+-----------------------------------+\n" +
+			`| Created at | ${(blanks+created).slice(-33)} |\n` + 
+			`| Members    | ${(blanks+nonBots).slice(-33)} |\n` + 
+			`| With bots  | ${(blanks+total).slice(-33)} |\n` + 
+			"+------------+-----------------------------------+\n```"
+		);
+	}
+
 	setGreetingChannel(msg:Discord.Message, servers:Map<string, ServerConfig>) {
 		if (!msg.guild) return;
 		if (!msg.member!.hasPermission("ADMINISTRATOR")) {
@@ -310,6 +338,7 @@ export class CommandHandler {
 	}
 
 	async uwu(msg:Discord.Message, servers:Map<string, ServerConfig>) {
+		if (msg.author.bot) return;
 		var toUwuize = "";
 		if (msg.content.length == `${this.botConfig.prefix}uwu`.length) {
 			try {
