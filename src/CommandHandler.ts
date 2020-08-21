@@ -16,6 +16,7 @@ export class CommandHandler {
 			`\`${this.botConfig.prefix}uwu {text}\` Translates the message above, or the provided text into uwuspeech \n` +
 			`\`${this.botConfig.prefix}help\` Displays this help message \n` +
 			`\`${this.botConfig.prefix}about\` Displays info about this bot \n` +
+			`\`${this.botConfig.prefix}serverinfo\` Displays member count and server creation date \n` +
 			`\`${this.botConfig.prefix}listroles\` Gives a list of self-assignable roles \n` +
 			`\`${this.botConfig.prefix}getrole [rolename]\` Gives you a self-assignable role \n` +
 			`\`${this.botConfig.prefix}takerole [rolename]\` Takes away a self-assignable role \n`;
@@ -63,15 +64,11 @@ export class CommandHandler {
 		let created = msg.guild.createdAt.toUTCString();
 		let nonBots = members.filter(v => !v.user.bot).size;
 		let total = members.size;
-		let blanks = "                                 ";
 		msg.channel.send(
-			`Info about **${msg.guild.name}**` +
-			"```\n" +
-			"+------------+-----------------------------------+\n" +
-			`| Created at | ${(blanks+created).slice(-33)} |\n` + 
-			`| Members    | ${(blanks+nonBots).slice(-33)} |\n` + 
-			`| With bots  | ${(blanks+total).slice(-33)} |\n` + 
-			"+------------+-----------------------------------+\n```"
+			`Info about **${msg.guild.name}**\n\n` +
+			`**Created at**: ${created} \n` + 
+			`**Members**: ${nonBots} \n` + 
+			`**With bots**: ${total}`
 		);
 	}
 
