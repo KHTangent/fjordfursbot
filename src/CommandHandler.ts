@@ -16,13 +16,13 @@ export class CommandHandler {
 			`\`${this.botConfig.prefix}uwu {text}\` Translates the message above, or the provided text into uwuspeech \n` +
 			`\`${this.botConfig.prefix}help\` Displays this help message \n` +
 			`\`${this.botConfig.prefix}about\` Displays info about this bot \n` +
-			`\`${this.botConfig.prefix}serverinfo\` Displays member count and server creation date \n` +
+			`\`${this.botConfig.prefix}serverinfo\` Displays member count and server creation date \n\n` +
 			`\`${this.botConfig.prefix}listroles\` Gives a list of self-assignable roles \n` +
 			`\`${this.botConfig.prefix}getrole [rolename]\` Gives you a self-assignable role \n` +
 			`\`${this.botConfig.prefix}takerole [rolename]\` Takes away a self-assignable role \n`;
 		if (msg.guild && servers.has(msg.guild.id) && servers.get(msg.guild.id)!.modmailServerName) {
 			helpMessage += `\`${this.botConfig.prefix}modmail ${servers.get(msg.guild.id)!.modmailServerName!} [message]\`` +
-				` (SEND THIS AS A DIRECT MESSAGE TO THE BOT) Sends a modmail`;
+				` (SEND THIS AS A DIRECT MESSAGE TO THE BOT) Sends a modmail\n`;
 		}
 		if (msg.member && msg.member.hasPermission("ADMINISTRATOR")) {
 			helpMessage += "\n" + 
@@ -42,9 +42,9 @@ export class CommandHandler {
 		msg.channel.send(
 			"Hello, I'm **FjordFursBot**!\n" +
 			"By KHTangent\n" +
-			"Licenced under the MIT Licence.\n" + 
+			"Licensed under the MIT License.\n" + 
 			"<https://github.com/KHTangent/FjordFursBot>\n" + 
-			"Version 0.3.1"
+			"Version 0.3.2"
 		);
 	}
 
