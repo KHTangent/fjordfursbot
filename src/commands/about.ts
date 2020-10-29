@@ -8,7 +8,7 @@ let newCommand: Command = {
 			"By KHTangent\n" +
 			"Licensed under the MIT License.\n" + 
 			"<https://github.com/KHTangent/FjordFursBot>\n" + 
-			`Version ${process.env.npm_package_version}` 
+			`Version 0.4.0` 
 		);
 	}
 }
