@@ -6,13 +6,17 @@ let newCommand: Command = {
 	async execute(ctx) {
 		if (!ctx.msg.guild) return;
 		if (!ctx.msg.member!.hasPermission("ADMINISTRATOR")) {
-			ctx.msg.channel.send("You need to be an administrator to use that command.");
+			ctx.msg.channel.send(
+				"You need to be an administrator to use that command."
+			);
 			return;
 		}
 		if (!ctx.servers.has(ctx.msg.guild.id)) {
 			ctx.servers.set(ctx.msg.guild.id, {});
 		}
-		var roleid = ctx.msg.content.substring(`${ctx.botConfig.prefix}addselfassignrole`.length+1).trim();
+		var roleid = ctx.msg.content
+			.substring(`${ctx.botConfig.prefix}addselfassignrole`.length + 1)
+			.trim();
 		var role;
 		try {
 			role = await ctx.msg.guild.roles.fetch(roleid);
@@ -25,10 +29,10 @@ let newCommand: Command = {
 		}
 		if (!ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles) {
 			ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles = [];
-		}
-		else {
+		} else {
 			// Verify that the role isn't there already
-			for (var grole of ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles!) {
+			for (var grole of ctx.servers.get(ctx.msg.guild.id)!
+				.selfAssignableRoles!) {
 				if (grole.id == role.id || grole.name == role.name.toLowerCase()) {
 					ctx.msg.channel.send("This role has already been added.");
 					return;
@@ -37,11 +41,11 @@ let newCommand: Command = {
 		}
 		ctx.servers.get(ctx.msg.guild!.id)!.selfAssignableRoles!.push({
 			id: role.id,
-			name: role.name.toLowerCase()
+			name: role.name.toLowerCase(),
 		});
 		ConfigLoader.writeServerConfig(ctx.servers);
 		ctx.msg.channel.send(`Role ${role.name} has been made self-assignable.`);
-	}
-}
+	},
+};
 
 module.exports = newCommand;

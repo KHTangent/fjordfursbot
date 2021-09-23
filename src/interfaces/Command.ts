@@ -6,8 +6,8 @@ export interface Command {
 }
 
 export interface CommandContext {
-	msg: Message,
-	bot: Client,
-	botConfig: BotConfig,
-	servers: Map<string, ServerConfig>
+	msg: Message;
+	bot: Client;
+	botConfig: BotConfig;
+	servers: Map<string, ServerConfig>;
 }

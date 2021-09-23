@@ -5,12 +5,12 @@ let newCommand: Command = {
 	execute(ctx) {
 		ctx.msg.channel.send(
 			"Hello, I'm **FjordFursBot**!\n" +
-			"By KHTangent\n" +
-			"Licensed under the MIT License.\n" + 
-			"<https://github.com/KHTangent/FjordFursBot>\n" + 
-			`Version 0.4.0` 
+				"By KHTangent\n" +
+				"Licensed under the MIT License.\n" +
+				"<https://github.com/KHTangent/FjordFursBot>\n" +
+				`Version 0.4.0`
 		);
-	}
-}
+	},
+};
 
 module.exports = newCommand;
