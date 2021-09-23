@@ -59,14 +59,22 @@ bot.on("guildMemberAdd", (member: Discord.GuildMember) => {
 	if (serverConfig.welcomeChannelId && serverConfig.welcomeMessage) {
 		bot.channels
 			.fetch(serverConfig.welcomeChannelId)
-			.then((channel: Discord.Channel) => {
+			.then(async (channel: Discord.Channel) => {
 				if (channel.type != "text") return;
 				var textChannel = channel as Discord.TextChannel;
+				let memberCount = "`unknown`";
+				try {
+					memberCount =
+						"" +
+						(await textChannel.guild.members.fetch()).filter((v) => !v.user.bot)
+							.size;
+				} catch (_: unknown) {
+					// ignore
+				}
 				textChannel.send(
-					serverConfig.welcomeMessage!.replace(
-						/{user}/g,
-						"<@" + member.user.id + ">"
-					)
+					serverConfig
+						.welcomeMessage!.replace(/{user}/g, "<@" + member.user.id + ">")
+						.replace(/{members}/g, memberCount)
 				);
 			});
 	}
@@ -78,11 +86,22 @@ bot.on("guildMemberRemove", (member: Discord.GuildMember) => {
 	if (serverConfig.goodbyeChannelId && serverConfig.welcomeMessage) {
 		bot.channels
 			.fetch(serverConfig.goodbyeChannelId)
-			.then((channel: Discord.Channel) => {
+			.then(async (channel: Discord.Channel) => {
 				if (channel.type != "text") return;
 				var textChannel = channel as Discord.TextChannel;
+				let memberCount = "`unknown`";
+				try {
+					memberCount =
+						"" +
+						(await textChannel.guild.members.fetch()).filter((v) => !v.user.bot)
+							.size;
+				} catch (_: unknown) {
+					// ignore
+				}
 				textChannel.send(
-					serverConfig.goodbyeMessage!.replace(/{user}/g, member.user.username)
+					serverConfig
+						.goodbyeMessage!.replace(/{user}/g, member.user.username)
+						.replace(/{members}/g, memberCount)
 				);
 			});
 	}
