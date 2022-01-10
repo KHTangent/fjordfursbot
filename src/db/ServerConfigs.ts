@@ -4,6 +4,9 @@ import { getDb } from "./db";
 export class ServerConfigs {
 	private static servers: Map<string, ServerConfig> = new Map();
 
+	/**
+	 * Used for initial setup to build a cache of the server config
+	 */
 	static async loadAll(): Promise<void> {
 		const db = await getDb();
 		let rows = await db.all("SELECT * FROM servers");
@@ -19,6 +22,11 @@ export class ServerConfigs {
 		});
 	}
 
+	/**
+	 * Retrieves config for a server from cache.
+	 * @param id Guild ID to get config of
+	 * @returns All saved parameters for the guild (can be an empty object)
+	 */
 	static get(id: string): ServerConfig {
 		if (this.servers.has(id)) {
 			return this.servers.get(id)!;
@@ -27,6 +35,11 @@ export class ServerConfigs {
 		}
 	}
 
+	/**
+	 * Convenience function to find the guild ID a modmail server name belongs to
+	 * @param name Guild name from `+modmailset`
+	 * @returns Guild ID if found, otherwise ""
+	 */
 	static getIdFromModmailName(name: string): string {
 		let id = "";
 		this.servers.forEach((val, key) => {
@@ -37,6 +50,11 @@ export class ServerConfigs {
 		return id;
 	}
 
+	/**
+	 * Replaces or inserts a new configuration into the database.
+	 * @param id Guild ID to replace config of
+	 * @param config Config to instert
+	 */
 	static async set(id: string, config: ServerConfig): Promise<void> {
 		const db = await getDb();
 		let sql = `
