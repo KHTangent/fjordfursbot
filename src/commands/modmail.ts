@@ -1,4 +1,5 @@
 import Discord = require("discord.js");
+import { ServerConfigs } from "../db/ServerConfigs";
 import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
@@ -17,19 +18,17 @@ let newCommand: Command = {
 			);
 			return;
 		}
-		var gID;
-		ctx.servers.forEach((val, key) => {
-			if (val.modmailServerName == splitMessage[1]) gID = key;
-		});
-		if (!gID || !ctx.servers.get(gID)!.modmailChannelId) {
+
+		const gID = ServerConfigs.getIdFromModmailName(splitMessage[1]);
+		if (!gID || !ServerConfigs.get(gID).modmailChannelId) {
 			ctx.msg.channel.send("Invalid server name.");
 			return;
 		}
 		try {
-			var channel = await ctx.bot.channels.fetch(
-				ctx.servers.get(gID)!.modmailChannelId!
-			);
-			(channel as Discord.TextChannel).send(splitMessage.slice(2).join(" "));
+			const channel = (await ctx.bot.channels.fetch(
+				ServerConfigs.get(gID).modmailChannelId!
+			)) as Discord.TextChannel;
+			channel.send(splitMessage.slice(2).join(" "));
 			ctx.msg.react("☑");
 		} catch (e) {
 			ctx.msg.channel.send(

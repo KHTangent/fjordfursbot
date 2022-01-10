@@ -34,6 +34,16 @@ export class ServerConfigs {
 		}
 	}
 
+	static getIdFromModmailName(name: string): string {
+		let id = "";
+		this.servers.forEach((val, key) => {
+			if (val.modmailServerName == name) {
+				id = key;
+			}
+		});
+		return id;
+	}
+
 	static async set(id: string, config: ServerConfig): Promise<void> {
 		const db = await getDb();
 		let sql = `
@@ -67,7 +77,6 @@ export class ServerConfigs {
 			await db.run(sql, updateData);
 			this.servers.set(id, config);
 		} catch (e: unknown) {
-			throw e;
 			throw new Error("Error saving server config");
 		}
 	}
