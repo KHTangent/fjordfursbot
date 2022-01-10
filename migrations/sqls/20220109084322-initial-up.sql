@@ -1,5 +1,3 @@
-PRAGMA foreign_keys = ON;
-
 CREATE TABLE servers (
 	`id` TEXT PRIMARY KEY UNIQUE,
 	`welcomeChannelId` TEXT,
@@ -11,7 +9,7 @@ CREATE TABLE servers (
 );
 
 CREATE TABLE selfAssignRoles (
-	`id` TEXT NOT NULL REFERENCES servers(id) ON DELETE CASCADE,
+	`id` TEXT NOT NULL,
 	`name` TEXT NOT NULL,
 	`roleId` TEXT UNIQUE NOT NULL,
 	UNIQUE(`id`, `name`)
