@@ -1,3 +1,4 @@
+import { ServerConfig } from "../interfaces/DbTypes";
 import { getDb } from "./db";
 
 export class ServerConfigs {
@@ -14,14 +15,6 @@ export class ServerConfigs {
 				goodbyeMessage: row.goodbyeMessage,
 				modmailChannelId: row.modmailChannelId,
 				modmailServerName: row.modmailServerName,
-				selfAssignableRoles: [],
-			});
-		});
-		rows = await db.all("SELECT * FROM selfAssignRoles");
-		rows.forEach((row) => {
-			this.servers.get(row.id)?.selfAssignableRoles?.push({
-				id: row.roleId,
-				name: row.name,
 			});
 		});
 	}

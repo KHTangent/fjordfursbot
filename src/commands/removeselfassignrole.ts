@@ -1,9 +1,9 @@
-import { ConfigLoader } from "../ConfigLoader";
+import { SelfAssignRoles } from "../db/SelfAssignRoles";
 import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
 	name: "removeselfassignrole",
-	execute(ctx) {
+	async execute(ctx) {
 		if (!ctx.msg.guild) return;
 		if (!ctx.msg.member!.hasPermission("ADMINISTRATOR")) {
 			ctx.msg.channel.send(
@@ -11,32 +11,15 @@ let newCommand: Command = {
 			);
 			return;
 		}
-		if (!ctx.servers.has(ctx.msg.guild.id)) {
-			ctx.servers.set(ctx.msg.guild.id, {});
-		}
-		if (!ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles) {
-			ctx.msg.channel.send(
-				"This server does not have any self-assignable roles"
-			);
-		}
-		var roleid = ctx.msg.content
+		var roleName = ctx.msg.content
 			.substring(`${ctx.botConfig.prefix}removeselfassignrole`.length + 1)
 			.trim();
-		for (
-			var i = 0;
-			i < ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles!.length;
-			i++
-		) {
-			if (
-				ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles![i].id == roleid
-			) {
-				ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles!.splice(i, 1);
-				ctx.msg.channel.send("Role removed");
-				ConfigLoader.writeServerConfig(ctx.servers);
-				return;
-			}
+		const removed = await SelfAssignRoles.remove(ctx.msg.guild.id, roleName);
+		if (removed) {
+			ctx.msg.channel.send("Role removed from self-assignable roles.");
+		} else {
+			ctx.msg.channel.send("Role is not self-assignable");
 		}
-		ctx.msg.channel.send("Role not found.");
 	},
 };
 

@@ -1,4 +1,5 @@
 import { Client, Message } from "discord.js";
+import { ServerConfig } from "./DbTypes";
 
 export interface Command {
 	name: string;
@@ -9,5 +10,4 @@ export interface CommandContext {
 	msg: Message;
 	bot: Client;
 	botConfig: BotConfig;
-	servers: Map<string, ServerConfig>;
 }

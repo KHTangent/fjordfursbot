@@ -1,26 +1,13 @@
+import { SelfAssignRoles } from "../db/SelfAssignRoles";
 import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
 	name: "listroles",
-	execute(ctx) {
+	async execute(ctx) {
 		if (!ctx.msg.guild) return;
-		if (
-			!ctx.servers.get(ctx.msg.guild.id) ||
-			!ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles ||
-			ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles?.length == 0
-		) {
-			ctx.msg.channel.send(
-				"This server does not have any self-assignable roles."
-			);
-			return;
-		}
+		const roles = await SelfAssignRoles.list(ctx.msg.guild.id);
 		var listMessage =
-			"List of self-assignable roles: ```" +
-			ctx.servers
-				.get(ctx.msg.guild.id)!
-				.selfAssignableRoles!.map((r) => r.name)
-				.join(", ") +
-			"```";
+			"List of self-assignable roles: ```" + roles.join(", ") + "```";
 		ctx.msg.channel.send(listMessage);
 	},
 };

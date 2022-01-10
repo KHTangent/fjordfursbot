@@ -34,7 +34,6 @@ import { ServerConfigs } from "./db/ServerConfigs";
 
 	console.log("Getting server configs...");
 	await ServerConfigs.loadAll();
-	var servers = ConfigLoader.getServerConfig();
 	console.log("Loaded server configs.");
 
 	console.log("Connecting to Discord...");
@@ -58,13 +57,11 @@ import { ServerConfigs } from "./db/ServerConfigs";
 				bot: bot,
 				botConfig: config,
 				msg: msg,
-				servers: servers,
 			});
 		}
 	});
 
 	bot.on("guildMemberAdd", async (member: Discord.GuildMember) => {
-		if (!servers.has(member.guild.id)) return;
 		let serverConfig = ServerConfigs.get(member.guild.id);
 		if (serverConfig.welcomeChannelId && serverConfig.welcomeMessage) {
 			let welcomeChannel;
@@ -96,7 +93,6 @@ import { ServerConfigs } from "./db/ServerConfigs";
 	});
 
 	bot.on("guildMemberRemove", async (member: Discord.GuildMember) => {
-		if (!servers.has(member.guild.id)) return;
 		let serverConfig = ServerConfigs.get(member.guild.id);
 		if (serverConfig.goodbyeChannelId && serverConfig.goodbyeMessage) {
 			let goodbyeChannel;

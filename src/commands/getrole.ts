@@ -1,31 +1,21 @@
+import { SelfAssignRoles } from "../db/SelfAssignRoles";
 import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
 	name: "getrole",
 	async execute(ctx) {
 		if (!ctx.msg.guild) return;
-		if (
-			!ctx.servers.get(ctx.msg.guild.id) ||
-			!ctx.servers.get(ctx.msg.guild.id)!.selfAssignableRoles
-		) {
-			ctx.msg.channel.send(
-				"This server does not have any self-assignable roles."
-			);
-			return;
-		}
 		var roleName = ctx.msg.content
 			.substring(`${ctx.botConfig.prefix}getrole`.length + 1)
 			.trim()
 			.toLowerCase();
-		var roleObject = ctx.servers
-			.get(ctx.msg.guild.id)!
-			.selfAssignableRoles!.find((r) => r.name == roleName);
-		if (!roleObject) {
-			ctx.msg.channel.send("Role not found: `" + roleName + "`");
+		const roleId = await SelfAssignRoles.getId(ctx.msg.guild.id, roleName);
+		if (roleId == "") {
+			ctx.msg.channel.send("Role not found");
 			return;
 		}
 		try {
-			ctx.msg.member!.roles.add(roleObject.id, "Requested");
+			ctx.msg.member!.roles.add(roleId, "Requested");
 			ctx.msg.react("☑");
 		} catch (e) {
 			ctx.msg.channel.send("Something went wrong while giving you the role.");
