@@ -11,3 +11,15 @@ export interface RoleNameID {
 	name: string;
 	id: string;
 }
+
+export interface AutoResponse {
+	guildId: string;
+	trigger: string;
+	reply: string;
+	exact: boolean;
+}
+
+export interface AutoResponseReduced {
+	trigger: string;
+	exact: boolean;
+}

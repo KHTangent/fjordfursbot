@@ -6,6 +6,7 @@ import { ConfigLoader } from "./ConfigLoader";
 import { Command } from "./interfaces/Command";
 import { connect as connectToDb } from "./db/db";
 import { ServerConfigs } from "./db/ServerConfigs";
+import { AutoResponses } from "./db/AutoResponses";
 
 (async () => {
 	console.log("Starting FjordFursBot...");
@@ -32,9 +33,10 @@ import { ServerConfigs } from "./db/ServerConfigs";
 	await connectToDb("data.db");
 	console.log("sqlite3 connection established.");
 
-	console.log("Getting server configs...");
+	console.log("Populating chaches...");
 	await ServerConfigs.loadAll();
-	console.log("Loaded server configs.");
+	await AutoResponses.loadAll();
+	console.log("Caches populated");
 
 	console.log("Connecting to Discord...");
 	const bot = new Discord.Client();
@@ -44,20 +46,33 @@ import { ServerConfigs } from "./db/ServerConfigs";
 	});
 
 	bot.on("message", (msg: Discord.Message) => {
-		if (!msg.content.startsWith(config.prefix)) return;
+		if (msg.author.bot) return;
+		if (msg.content.startsWith(config.prefix)) {
+			let splitCommand = msg.content
+				.slice(config.prefix.length)
+				.trim()
+				.split(/ +/);
+			let command = splitCommand.shift()?.toLocaleLowerCase();
 
-		let splitCommand = msg.content
-			.slice(config.prefix.length)
-			.trim()
-			.split(/ +/);
-		let command = splitCommand.shift()?.toLocaleLowerCase();
-
-		if (command && loadedCommands.has(command)) {
-			(loadedCommands.get(command)! as Command).execute({
-				bot: bot,
-				botConfig: config,
-				msg: msg,
-			});
+			if (command && loadedCommands.has(command)) {
+				(loadedCommands.get(command)! as Command).execute({
+					bot: bot,
+					botConfig: config,
+					msg: msg,
+				});
+			}
+		} else if (msg.guild) {
+			// Check for autoresponses
+			const ars = AutoResponses.list(msg.guild.id);
+			for (const ar of ars) {
+				if (
+					(ar.exact && ar.trigger == msg.content) ||
+					(!ar.exact && msg.content.indexOf(ar.trigger) != -1)
+				) {
+					const response = AutoResponses.get(msg.guild.id, ar.trigger)?.reply;
+					msg.channel.send(response);
+				}
+			}
 		}
 	});
 
