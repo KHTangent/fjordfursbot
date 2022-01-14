@@ -4,7 +4,7 @@ import { readdirSync } from "fs";
 
 import { ConfigLoader } from "./ConfigLoader";
 import { Command } from "./interfaces/Command";
-import { connect as connectToDb } from "./db/db";
+import * as db from "./db/db";
 import { ServerConfigs } from "./db/ServerConfigs";
 import { AutoResponses } from "./db/AutoResponses";
 
@@ -30,7 +30,7 @@ import { AutoResponses } from "./db/AutoResponses";
 	console.log("Loaded bot config.");
 
 	console.log("Creating sqlite3 connection...");
-	await connectToDb("data.db");
+	await db.connect("data.db");
 	console.log("sqlite3 connection established.");
 
 	console.log("Populating chaches...");
@@ -143,6 +143,13 @@ import { AutoResponses } from "./db/AutoResponses";
 					.replace(/{members}/g, memberCount)
 			);
 		}
+	});
+
+	process.on("SIGINT", async () => {
+		console.log("Exiting...");
+		bot.destroy();
+		await db.close();
+		process.exit();
 	});
 
 	bot.login(config.token);

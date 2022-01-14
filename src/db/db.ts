@@ -12,3 +12,7 @@ export async function connect(filename: string) {
 export async function getDb(): Promise<Database> {
 	return db;
 }
+
+export async function close() {
+	await db.close();
+}
