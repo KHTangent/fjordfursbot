@@ -63,6 +63,13 @@ import { AutoResponses } from "./db/AutoResponses";
 			}
 		} else if (msg.guild) {
 			// Check for autoresponses
+			const serverConfig = ServerConfigs.get(msg.member!.guild.id);
+			if (
+				serverConfig.noAutoResponseRole &&
+				msg.member!.roles.cache.has(serverConfig.noAutoResponseRole)
+			) {
+				return;
+			}
 			const ars = AutoResponses.list(msg.guild.id);
 			for (const ar of ars) {
 				if (

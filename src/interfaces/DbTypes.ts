@@ -5,6 +5,7 @@ export interface ServerConfig {
 	goodbyeChannelId?: string;
 	modmailServerName?: string;
 	modmailChannelId?: string;
+	noAutoResponseRole?: string;
 }
 
 export interface RoleNameID {

@@ -18,6 +18,7 @@ export class ServerConfigs {
 				goodbyeMessage: row.goodbyeMessage,
 				modmailChannelId: row.modmailChannelId,
 				modmailServerName: row.modmailServerName,
+				noAutoResponseRole: row.noAutoResponseRole,
 			});
 		});
 	}
@@ -65,15 +66,17 @@ export class ServerConfigs {
 				goodbyeChannelId,
 				goodbyeMessage,
 				modmailChannelId,
-				modmailServerName
-			) VALUES (?, ?, ?, ?, ?, ?, ?)
+				modmailServerName,
+				noAutoResponseRole
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 			ON CONFLICT(id) DO UPDATE SET 
 				welcomeChannelId = excluded.welcomeChannelId,
 				welcomeMessage = excluded.welcomeMessage,
 				goodbyeChannelId = excluded.goodbyeChannelId,
 				goodbyeMessage = excluded.goodbyeMessage,
 				modmailChannelId = excluded.modmailChannelId,
-				modmailServerName = excluded.modmailServerName
+				modmailServerName = excluded.modmailServerName,
+				noAutoResponseRole = excluded.noAutoResponseRole
 		`;
 		let updateData = [
 			id,
@@ -83,6 +86,7 @@ export class ServerConfigs {
 			config.goodbyeMessage,
 			config.modmailChannelId,
 			config.modmailServerName,
+			config.noAutoResponseRole,
 		];
 		try {
 			await db.run(sql, updateData);
