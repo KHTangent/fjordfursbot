@@ -1,7 +1,6 @@
 # FjordFursBot - A very basic Discord bot
 
-FjordFursBot is a simple bot written for the FjordFurs Discord server. It doesn't have a lot of features at this time, but 
-more features might be added later. Please open an issue if you find a bug or have a suggestion. 
+FjordFursBot is a simple bot written for the FjordFurs Discord server. It doesn't have a lot of features at this time, but more features might be added later. Please open an issue if you find a bug or have a suggestion. 
  
 ----------
 
@@ -9,6 +8,8 @@ more features might be added later. Please open an issue if you find a bug or ha
 - Greet new members with a custom message
 - Send a message when a user leaves
 - Send anonymous modmail
+- Self-assignable roles using commands
+- Auto-responses to words and phrases, with an opt-out role
 
 ----------
 
@@ -34,7 +35,14 @@ If you set a custom prefix, replace "+" with your prefix for the commands below.
 - `+modmailset servername [name]` Set what name people should use to send modmail to this server
 - `+addselfassignrole [id]` Makes a role self-assignable for users using the `+getrole`-command
 - `+removeselfassignrole [name]` Removes a role from being self-assignable. Note that name is used here, not id.
- 
+
+### Auto-responses
+Autoresponses are replies the bot makes to specific words or phrases. A user can choose to opt out of all responses using a customizable role. The following commands are available for admins to manage the auto-responses: 
+- `+addautoresponse [trigger] | [e/a] | [response]` Makes the bot respond to `trigger` with `response`. The middle parameter should be `e` if the bot should only respond to messages containing only the `trigger`, and `a` if the `trigger` only has to be somewhere in the message.
+ - `+removeautoresponse [trigger]` Remove the autoresponse on `trigger`
+ - `+listautoresponses` Gives a list of all triggers of autoresponses
+ - `+setnoautoresponserole [role id]` Sets a role to opt out of auto-responses. A user with this role will never receive an auto-response. 
+
 ----------
 
 ## Setup
@@ -45,3 +53,6 @@ If you set a custom prefix, replace "+" with your prefix for the commands below.
 5. Install `db-migrate` from npm: `npm install -g db-migrate`
 6. Run database migrations: `db-migrate up`
 7. Compile and run the bot with `npm start` from the project directory
+
+### Upgrading
+Remember to re-run `db-migrate` when a new update has arrived to update the database schema.
