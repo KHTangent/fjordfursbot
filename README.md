@@ -25,6 +25,7 @@ If you set a custom prefix, replace "+" with your prefix for the commands below.
 - `+takerole [name]` Removes a self-assignable role
 - `+listroles` Lists self-assignable roles for this server
 - `+modmail [servername] [message]` Sends an anonymous modmail (must be used in DM)
+- `+randemoji {count} {a}` Sends `count` random emojis. If you add an `a` after the amount, the first emoji will be a living creature.
 
 ### For admins
 - `+greeting channel [id]` Set what channel to greet new users in
