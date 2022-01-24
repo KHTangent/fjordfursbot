@@ -139,7 +139,7 @@ import { AutoResponses } from "./db/AutoResponses";
 			}
 			goodbyeChannel.send(
 				serverConfig.goodbyeMessage
-					.replace(/{user}/g, "<@" + member.user.id + ">")
+					.replace(/{user}/g, member.user.username)
 					.replace(/{members}/g, memberCount)
 			);
 		}
