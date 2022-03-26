@@ -36,4 +36,12 @@ export class Birthdays {
 		);
 		return rows;
 	}
+
+	static async delete(guildId: string, userId: string) {
+		const db = await getDb();
+		await db.run(`DELETE FROM birthdays WHERE guildId = ? AND userId = ?`, [
+			guildId,
+			userId,
+		]);
+	}
 }
