@@ -3,15 +3,10 @@ import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
 	name: "listautoresponses",
+	guildOnly: true,
+	adminOnly: true,
 	async execute(ctx) {
-		if (!ctx.msg.guild) return;
-		if (!ctx.msg.member!.hasPermission("ADMINISTRATOR")) {
-			ctx.msg.channel.send(
-				"You need to be an administrator to use that command."
-			);
-			return;
-		}
-		const list = AutoResponses.list(ctx.msg.guild.id).map(
+		const list = AutoResponses.list(ctx.msg.guild!.id).map(
 			(e) => (e.exact ? "e | " : "a | ") + e.trigger
 		);
 		const listMessage =

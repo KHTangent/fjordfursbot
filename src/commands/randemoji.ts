@@ -136,7 +136,8 @@ let newCommand: Command = {
 		}
 		let reply = "Your emojis: ";
 		if (messageParts.length > 2 && messageParts[2].startsWith("a")) {
-			reply += CreatureEmojis[Math.floor(Math.random()*CreatureEmojis.length)];
+			reply +=
+				CreatureEmojis[Math.floor(Math.random() * CreatureEmojis.length)];
 			--count;
 		}
 		for (let i = 0; i < count; ++i) {

@@ -3,14 +3,9 @@ import { ServerConfigs } from "../db/ServerConfigs";
 
 let newCommand: Command = {
 	name: "goodbye",
+	adminOnly: true,
+	guildOnly: true,
 	async execute(ctx) {
-		if (!ctx.msg.guild) return;
-		if (!ctx.msg.member!.hasPermission("ADMINISTRATOR")) {
-			ctx.msg.channel.send(
-				"You need to be an administrator to use that command."
-			);
-			return;
-		}
 		if (ctx.msg.content.startsWith(`${ctx.botConfig.prefix}goodbye channel`)) {
 			var id = ctx.msg.content
 				.substring(`${ctx.botConfig.prefix}goodbye channel`.length + 1)
@@ -18,7 +13,7 @@ let newCommand: Command = {
 			let goodbyeChannel;
 			try {
 				goodbyeChannel = await ctx.bot.channels.fetch(id);
-			} catch (e: unknown) {
+			} catch (_: unknown) {
 				ctx.msg.channel.send("Unable to get channel with this id.");
 				return;
 			}

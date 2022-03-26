@@ -4,14 +4,9 @@ import { Role } from "discord.js";
 
 let newCommand: Command = {
 	name: "setnoautoresponserole",
+	guildOnly: true,
+	adminOnly: true,
 	async execute(ctx) {
-		if (!ctx.msg.guild) return;
-		if (!ctx.msg.member!.hasPermission("ADMINISTRATOR")) {
-			ctx.msg.channel.send(
-				"You need to be an administrator to use that command."
-			);
-			return;
-		}
 		var roleId = ctx.msg.content
 			.substring(`${ctx.botConfig.prefix}setnoautoresponserole`.length + 1)
 			.trim();
@@ -19,7 +14,7 @@ let newCommand: Command = {
 		let role: Role | null = null;
 		if (roleId.toLowerCase().indexOf("none") === -1) {
 			try {
-				role = await ctx.msg.guild.roles.fetch(roleId);
+				role = await ctx.msg.guild!.roles.fetch(roleId);
 			} catch (e) {
 				ctx.msg.channel.send("Error getting role with id " + roleId);
 			}
@@ -28,10 +23,10 @@ let newCommand: Command = {
 				return;
 			}
 		}
-		const oldConfig = ServerConfigs.get(ctx.msg.guild.id);
+		const oldConfig = ServerConfigs.get(ctx.msg.guild!.id);
 		oldConfig.noAutoResponseRole = roleId ? roleId : undefined;
 		try {
-			await ServerConfigs.set(ctx.msg.guild.id, oldConfig);
+			await ServerConfigs.set(ctx.msg.guild!.id, oldConfig);
 			if (!role) {
 				ctx.msg.channel.send(`Ignore auto-response role has been unset`);
 			} else {

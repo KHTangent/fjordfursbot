@@ -3,14 +3,9 @@ import { AutoResponses } from "../db/AutoResponses";
 
 let newCommand: Command = {
 	name: "addautoresponse",
+	guildOnly: true,
+	adminOnly: true,
 	async execute(ctx) {
-		if (!ctx.msg.guild) return;
-		if (!ctx.msg.member!.hasPermission("ADMINISTRATOR")) {
-			ctx.msg.channel.send(
-				"You need to be an administrator to use that command."
-			);
-			return;
-		}
 		const commandParts = ctx.msg.content.split("|").map((e) => e.trim());
 		const prefix = ctx.botConfig.prefix;
 		if (commandParts.length != 3) {
@@ -36,7 +31,7 @@ let newCommand: Command = {
 		}
 		try {
 			await AutoResponses.add({
-				guildId: ctx.msg.guild.id,
+				guildId: ctx.msg.guild!.id,
 				reply: reply,
 				trigger: trigger,
 				exact: exactOrAnywhere == "e",

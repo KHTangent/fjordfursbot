@@ -1,8 +1,9 @@
 import { Client, Message } from "discord.js";
-import { ServerConfig } from "./DbTypes";
 
 export interface Command {
 	name: string;
+	adminOnly?: boolean;
+	guildOnly?: boolean;
 	execute(ctx: CommandContext): void;
 }
 

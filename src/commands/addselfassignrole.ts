@@ -3,20 +3,15 @@ import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
 	name: "addselfassignrole",
+	adminOnly: true,
+	guildOnly: true,
 	async execute(ctx) {
-		if (!ctx.msg.guild) return;
-		if (!ctx.msg.member!.hasPermission("ADMINISTRATOR")) {
-			ctx.msg.channel.send(
-				"You need to be an administrator to use that command."
-			);
-			return;
-		}
 		var roleId = ctx.msg.content
 			.substring(`${ctx.botConfig.prefix}addselfassignrole`.length + 1)
 			.trim();
 		let role;
 		try {
-			role = await ctx.msg.guild.roles.fetch(roleId);
+			role = await ctx.msg.guild!.roles.fetch(roleId);
 		} catch (e) {
 			ctx.msg.channel.send("Error getting role with id " + roleId);
 		}

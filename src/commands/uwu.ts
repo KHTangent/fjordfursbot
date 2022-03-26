@@ -3,7 +3,6 @@ import { Command } from "../interfaces/Command";
 let newCommand: Command = {
 	name: "uwu",
 	async execute(ctx) {
-		if (ctx.msg.author.bot) return;
 		var toUwuize = "";
 		if (ctx.msg.content.length == `${ctx.botConfig.prefix}uwu`.length) {
 			try {

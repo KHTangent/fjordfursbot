@@ -3,13 +3,13 @@ import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
 	name: "takerole",
+	guildOnly: true,
 	async execute(ctx) {
-		if (!ctx.msg.guild) return;
 		var roleName = ctx.msg.content
 			.substring(`${ctx.botConfig.prefix}takerole`.length + 1)
 			.trim()
 			.toLowerCase();
-		const roleId = await SelfAssignRoles.getId(ctx.msg.guild.id, roleName);
+		const roleId = await SelfAssignRoles.getId(ctx.msg.guild!.id, roleName);
 		if (roleId == "") {
 			ctx.msg.channel.send("Role not found");
 			return;

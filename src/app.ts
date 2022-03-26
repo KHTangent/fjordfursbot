@@ -33,7 +33,7 @@ import { AutoResponses } from "./db/AutoResponses";
 	await db.connect("data.db");
 	console.log("sqlite3 connection established.");
 
-	console.log("Populating chaches...");
+	console.log("Populating caches...");
 	await ServerConfigs.loadAll();
 	await AutoResponses.loadAll();
 	console.log("Caches populated");
@@ -55,7 +55,20 @@ import { AutoResponses } from "./db/AutoResponses";
 			let command = splitCommand.shift()?.toLocaleLowerCase();
 
 			if (command && loadedCommands.has(command)) {
-				(loadedCommands.get(command)! as Command).execute({
+				const commandObj = loadedCommands.get(command) as Command;
+				if (commandObj.guildOnly && !msg.guild) {
+					msg.channel.send("This command only works in servers.");
+					return;
+				} else if (
+					commandObj.adminOnly &&
+					!msg.member!.hasPermission("ADMINISTRATOR")
+				) {
+					msg.channel.send(
+						"You need to be an administrator to use that command."
+					);
+					return;
+				}
+				commandObj.execute({
 					bot: bot,
 					botConfig: config,
 					msg: msg,
@@ -91,7 +104,7 @@ import { AutoResponses } from "./db/AutoResponses";
 				welcomeChannel = await bot.channels.fetch(
 					serverConfig.welcomeChannelId
 				);
-			} catch (e) {
+			} catch (_: unknown) {
 				return;
 			}
 			if (welcomeChannel.type != "text") return;
@@ -122,7 +135,7 @@ import { AutoResponses } from "./db/AutoResponses";
 				goodbyeChannel = await bot.channels.fetch(
 					serverConfig.goodbyeChannelId
 				);
-			} catch (e) {
+			} catch (_: unknown) {
 				return;
 			}
 			if (goodbyeChannel.type != "text") return;

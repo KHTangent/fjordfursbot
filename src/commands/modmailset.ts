@@ -3,15 +3,9 @@ import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
 	name: "modmailset",
+	guildOnly: true,
+	adminOnly: true,
 	async execute(ctx) {
-		if (!ctx.msg.guild) return;
-		if (!ctx.msg.member!.hasPermission("ADMINISTRATOR")) {
-			ctx.msg.channel.send(
-				"You need to be an administrator to use that command."
-			);
-			return;
-		}
-
 		if (
 			ctx.msg.content.startsWith(`${ctx.botConfig.prefix}modmailset channel`)
 		) {
@@ -21,7 +15,7 @@ let newCommand: Command = {
 			let channel;
 			try {
 				channel = await ctx.bot.channels.fetch(id);
-			} catch (e) {
+			} catch (_: unknown) {
 				ctx.msg.channel.send("Unable to get channel with this id.");
 				return;
 			}
@@ -51,7 +45,7 @@ let newCommand: Command = {
 				ctx.msg.channel.send("Server name must be a single word");
 				return;
 			}
-			let gID = ServerConfigs.getIdFromModmailName(ctx.msg.guild.id);
+			let gID = ServerConfigs.getIdFromModmailName(ctx.msg.guild!.id);
 			if (gID == "") {
 				const config = ServerConfigs.get(ctx.msg.guild!.id);
 				config.modmailServerName = serverName;
