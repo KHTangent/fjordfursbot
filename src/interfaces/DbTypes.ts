@@ -6,6 +6,7 @@ export interface ServerConfig {
 	modmailServerName?: string;
 	modmailChannelId?: string;
 	noAutoResponseRole?: string;
+	birthdaysChannel?: string;
 }
 
 export interface RoleNameID {
@@ -23,4 +24,12 @@ export interface AutoResponse {
 export interface AutoResponseReduced {
 	trigger: string;
 	exact: boolean;
+}
+
+export interface Birthday {
+	guildId: string;
+	userId: string;
+	day: number;
+	month: number;
+	year: number;
 }

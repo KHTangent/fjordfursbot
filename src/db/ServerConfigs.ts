@@ -19,6 +19,7 @@ export class ServerConfigs {
 				modmailChannelId: row.modmailChannelId,
 				modmailServerName: row.modmailServerName,
 				noAutoResponseRole: row.noAutoResponseRole,
+				birthdaysChannel: row.birthdaysChannel,
 			});
 		});
 	}
@@ -67,8 +68,9 @@ export class ServerConfigs {
 				goodbyeMessage,
 				modmailChannelId,
 				modmailServerName,
-				noAutoResponseRole
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+				noAutoResponseRole,
+				birthdaysChannel
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 			ON CONFLICT(id) DO UPDATE SET 
 				welcomeChannelId = excluded.welcomeChannelId,
 				welcomeMessage = excluded.welcomeMessage,
@@ -76,7 +78,8 @@ export class ServerConfigs {
 				goodbyeMessage = excluded.goodbyeMessage,
 				modmailChannelId = excluded.modmailChannelId,
 				modmailServerName = excluded.modmailServerName,
-				noAutoResponseRole = excluded.noAutoResponseRole
+				noAutoResponseRole = excluded.noAutoResponseRole,
+				birthdaysChannel = excluded.birthdaysChannel
 		`;
 		let updateData = [
 			id,
@@ -87,6 +90,7 @@ export class ServerConfigs {
 			config.modmailChannelId,
 			config.modmailServerName,
 			config.noAutoResponseRole,
+			config.birthdaysChannel,
 		];
 		try {
 			await db.run(sql, updateData);
