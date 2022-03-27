@@ -10,6 +10,7 @@ FjordFursBot is a simple bot written for the FjordFurs Discord server. It doesn'
 - Send anonymous modmail
 - Self-assignable roles using commands
 - Auto-responses to words and phrases, with an opt-out role
+- Wish people happy birthday on their birthday
 
 ----------
 
@@ -26,6 +27,7 @@ If you set a custom prefix, replace "+" with your prefix for the commands below.
 - `+listroles` Lists self-assignable roles for this server
 - `+modmail [servername] [message]` Sends an anonymous modmail (must be used in DM)
 - `+randemoji {count} {a}` Sends `count` random emojis. If you add an `a` after the amount, the first emoji will be a living creature.
+- `+remember-birthday dd.mm.yyyy` (if enabled in server) Remembers your birthday, so the bot can wish you happy birthday when the day comes :)
 
 ### For admins
 - `+greeting channel [id]` Set what channel to greet new users in
@@ -36,6 +38,7 @@ If you set a custom prefix, replace "+" with your prefix for the commands below.
 - `+modmailset servername [name]` Set what name people should use to send modmail to this server
 - `+addselfassignrole [id]` Makes a role self-assignable for users using the `+getrole`-command
 - `+removeselfassignrole [name]` Removes a role from being self-assignable. Note that name is used here, not id.
+- `+setbirthdayschannel [id]` Sets channel to wish people happy birthday in
 
 ### Auto-responses
 Autoresponses are replies the bot makes to specific words or phrases. A user can choose to opt out of all responses using a customizable role. The following commands are available for admins to manage the auto-responses: 
