@@ -18,12 +18,22 @@ let newCommand: Command = {
 		}
 		const match = DATE_REGEX.exec(ctx.msg.content);
 		if (!match || !match.groups) {
-			ctx.msg.channel.send(
-				"Invalid date provided.\n" +
-					`Usage: \`${ctx.botConfig.prefix}remember-birthday dd.mm.yyyy\`\n` +
-					`Example if your birthday is the 2. of April 1998: ` +
-					`\`${ctx.botConfig.prefix}remember-birthday 02.04.1998\`\n`
-			);
+			if (ctx.msg.content.endsWith("remove")) {
+				try {
+					await Birthdays.delete(ctx.msg.guild!.id, ctx.msg.author.id);
+					ctx.msg.channel.send("Birthday removed");
+				} catch (_: unknown) {
+					ctx.msg.channel.send("Something went wrong when deleting birthday");
+				}
+			} else {
+				ctx.msg.channel.send(
+					"Invalid date provided.\n" +
+						`Usage: \`${ctx.botConfig.prefix}remember-birthday dd.mm.yyyy\`\n` +
+						`Example if your birthday is the 2. of April 1998: ` +
+						`\`${ctx.botConfig.prefix}remember-birthday 02.04.1998\`\n` +
+						`To forget a birthday, use \`${ctx.botConfig.prefix}remember-birthday remove\``
+				);
+			}
 			return;
 		}
 		const day = parseInt(match.groups.day);
