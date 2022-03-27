@@ -1,6 +1,11 @@
 import { ServerConfig } from "../interfaces/DbTypes";
 import { getDb } from "./db";
 
+interface GuildAndBirthdaychannel {
+	guildId: string;
+	birthdayChannelId: string;
+}
+
 export class ServerConfigs {
 	private static servers: Map<string, ServerConfig> = new Map();
 
@@ -98,5 +103,22 @@ export class ServerConfigs {
 		} catch (e: unknown) {
 			throw new Error("Error saving server config");
 		}
+	}
+
+	/**
+	 * Get all guilds where birthdays should be checked
+	 * @returns Array of objects with guild ID and channel ID
+	 */
+	static getGuildsWithBirthdayChannels(): GuildAndBirthdaychannel[] {
+		let withBirthdayChannel: GuildAndBirthdaychannel[] = [];
+		this.servers.forEach((val, key) => {
+			if (val.birthdaysChannel) {
+				withBirthdayChannel.push({
+					birthdayChannelId: val.birthdaysChannel,
+					guildId: key,
+				});
+			}
+		});
+		return withBirthdayChannel;
 	}
 }

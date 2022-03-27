@@ -62,3 +62,7 @@ export function simpleDateString(
 	else if (dayString.endsWith("3")) dayEnding = "rd";
 	return `${dayString}${dayEnding} of ${MONTH_NAMES[month - 1]}, ${year}`;
 }
+
+export function delay(ms: number): Promise<void> {
+	return new Promise((res, _) => setTimeout(res, ms));
+}

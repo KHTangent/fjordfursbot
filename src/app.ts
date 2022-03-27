@@ -7,6 +7,8 @@ import { Command } from "./interfaces/Command";
 import * as db from "./db/db";
 import { ServerConfigs } from "./db/ServerConfigs";
 import { AutoResponses } from "./db/AutoResponses";
+import { delay } from "./utils";
+import { handleBirthdays } from "./BirthdayHandler";
 
 (async () => {
 	console.log("Starting FjordFursBot...");
@@ -41,12 +43,34 @@ import { AutoResponses } from "./db/AutoResponses";
 	console.log("Connecting to Discord...");
 	const bot = new Discord.Client();
 
-	bot.on("ready", () => {
+	bot.on("ready", async () => {
 		console.log("Connected to Discord.");
+		// Start birthday checks
+		// Calculate seconds until next check
+		const timeNow = new Date();
+		const firstRun = new Date();
+		if (timeNow.getHours() > config.birthdayHour) {
+			firstRun.setTime(firstRun.getTime() + 1000 * 60 * 60 * 24);
+		}
+		firstRun.setHours(config.birthdayHour);
+		firstRun.setMinutes(0);
+		firstRun.setSeconds(0);
+		const msToWait = firstRun.getTime() - timeNow.getTime();
+		console.log(
+			`First birthday check in ${Math.floor(msToWait / 60000)} minutes`
+		);
+		await delay(msToWait);
+		// First call
+		handleBirthdays(bot);
+		// Call birthday update function every 24 hours
+		setInterval(() => {
+			handleBirthdays(bot);
+		}, 1000 * 60 * 60 * 24);
 	});
 
 	bot.on("message", (msg: Discord.Message) => {
 		if (msg.author.bot) return;
+		// Check all commands
 		if (msg.content.startsWith(config.prefix)) {
 			let splitCommand = msg.content
 				.slice(config.prefix.length)
@@ -74,8 +98,9 @@ import { AutoResponses } from "./db/AutoResponses";
 					msg: msg,
 				});
 			}
-		} else if (msg.guild) {
-			// Check for autoresponses
+		}
+		// Check for autoresponses
+		else if (msg.guild) {
 			const serverConfig = ServerConfigs.get(msg.member!.guild.id);
 			if (
 				serverConfig.noAutoResponseRole &&
@@ -97,6 +122,7 @@ import { AutoResponses } from "./db/AutoResponses";
 	});
 
 	bot.on("guildMemberAdd", async (member: Discord.GuildMember) => {
+		// Handle welcome messages
 		let serverConfig = ServerConfigs.get(member.guild.id);
 		if (serverConfig.welcomeChannelId && serverConfig.welcomeMessage) {
 			let welcomeChannel;
@@ -128,6 +154,7 @@ import { AutoResponses } from "./db/AutoResponses";
 	});
 
 	bot.on("guildMemberRemove", async (member: Discord.GuildMember) => {
+		// Handle goodbye messages
 		let serverConfig = ServerConfigs.get(member.guild.id);
 		if (serverConfig.goodbyeChannelId && serverConfig.goodbyeMessage) {
 			let goodbyeChannel;
