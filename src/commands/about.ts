@@ -8,7 +8,7 @@ let newCommand: Command = {
 				"By KHTangent\n" +
 				"Licensed under the MIT License.\n" +
 				"<https://github.com/KHTangent/FjordFursBot>\n" +
-				`Version 0.6.2`
+				`Version 0.7.0`
 		);
 	},
 };
