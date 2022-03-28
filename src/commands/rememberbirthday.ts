@@ -29,7 +29,7 @@ let newCommand: Command = {
 				ctx.msg.channel.send(
 					"Invalid date provided.\n" +
 						`Usage: \`${ctx.botConfig.prefix}remember-birthday dd.mm.yyyy\`\n` +
-						`Example if your birthday is the 2. of April 1998: ` +
+						`Example if your birthday is the 2nd of April 1998: ` +
 						`\`${ctx.botConfig.prefix}remember-birthday 02.04.1998\`\n` +
 						`To forget a birthday, use \`${ctx.botConfig.prefix}remember-birthday remove\``
 				);
@@ -53,7 +53,8 @@ let newCommand: Command = {
 				year,
 			});
 			ctx.msg.channel.send(
-				"Your birthday has been set to " + simpleDateString(day, month, year)
+				"Your birthday has been set to the " +
+					simpleDateString(day, month, year)
 			);
 		} catch (_: unknown) {
 			ctx.msg.channel.send("Something went wrong while saving your birthday");

@@ -57,7 +57,8 @@ export function simpleDateString(
 ): string {
 	const dayString = day.toString();
 	let dayEnding = "th";
-	if (dayString.endsWith("1")) dayEnding = "st";
+	if (dayString.length == 2 && dayString.charAt(0) == "1") dayEnding = "th";
+	else if (dayString.endsWith("1")) dayEnding = "st";
 	else if (dayString.endsWith("2")) dayEnding = "nd";
 	else if (dayString.endsWith("3")) dayEnding = "rd";
 	return `${dayString}${dayEnding} of ${MONTH_NAMES[month - 1]}, ${year}`;
