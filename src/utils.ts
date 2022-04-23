@@ -1,3 +1,6 @@
+import { readdirSync, lstatSync } from "fs";
+import {join as pathJoin} from "path";
+
 const MAX_ALLOWED_YEARS = 200;
 
 const MONTH_NAMES = [
@@ -66,4 +69,16 @@ export function simpleDateString(
 
 export function delay(ms: number): Promise<void> {
 	return new Promise((res, _) => setTimeout(res, ms));
+}
+
+export function walkDirSync(dir: string, paths: string[]): void {
+	let d = readdirSync(dir);
+	for (const entry of d) {
+		const inspected = pathJoin(dir, entry);
+		if (lstatSync(inspected).isDirectory()) {
+			walkDirSync(inspected, paths);
+		} else {
+			paths.push(inspected);
+		}
+	}
 }

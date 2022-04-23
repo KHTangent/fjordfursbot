@@ -1,5 +1,5 @@
-import { Command } from "../interfaces/Command";
-import { ServerConfigs } from "../db/ServerConfigs";
+import { Command } from "../../interfaces/Command";
+import { ServerConfigs } from "../../db/ServerConfigs";
 import { Role } from "discord.js";
 
 let newCommand: Command = {

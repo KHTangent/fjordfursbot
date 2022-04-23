@@ -1,31 +1,29 @@
 import Discord = require("discord.js");
 import { join as pathJoin } from "path";
-import { readdirSync } from "fs";
 
 import { ConfigLoader } from "./ConfigLoader";
 import { Command } from "./interfaces/Command";
 import * as db from "./db/db";
 import { ServerConfigs } from "./db/ServerConfigs";
 import { AutoResponses } from "./db/AutoResponses";
-import { delay } from "./utils";
+import { delay, walkDirSync } from "./utils";
 import { handleBirthdays } from "./BirthdayHandler";
 
 (async () => {
 	console.log("Starting FjordFursBot...");
 	console.log("Loading commands...");
 	let loadedCommands = new Map<string, Command>();
-	let commandsDir = readdirSync(pathJoin(__dirname, "commands")).filter((f) =>
-		f.endsWith(".js")
-	);
-	for (let commandFile of commandsDir) {
-		const command: Command = require(pathJoin(
-			__dirname,
-			"commands",
-			commandFile
-		));
+	// let commandsDir = readdirSync(pathJoin(__dirname, "commands")).filter((f) =>
+	// 	f.endsWith(".js")
+	// );
+	let commandPaths = new Array<string>();
+	walkDirSync(pathJoin(__dirname, "commands"), commandPaths);
+	commandPaths = commandPaths.filter(e => e.endsWith(".js"));
+	for (let commandFile of commandPaths) {
+		const command: Command = require(commandFile);
 		loadedCommands.set(command.name, command);
 	}
-	console.log(`Loaded ${commandsDir.length} commands.`);
+	console.log(`Loaded ${commandPaths.length} commands.`);
 
 	console.log("Getting bot config...");
 	var config = ConfigLoader.getBotConfig();

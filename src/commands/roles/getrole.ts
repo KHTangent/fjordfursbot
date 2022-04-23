@@ -1,12 +1,12 @@
-import { SelfAssignRoles } from "../db/SelfAssignRoles";
-import { Command } from "../interfaces/Command";
+import { SelfAssignRoles } from "../../db/SelfAssignRoles";
+import { Command } from "../../interfaces/Command";
 
 let newCommand: Command = {
-	name: "takerole",
+	name: "getrole",
 	guildOnly: true,
 	async execute(ctx) {
 		var roleName = ctx.msg.content
-			.substring(`${ctx.botConfig.prefix}takerole`.length + 1)
+			.substring(`${ctx.botConfig.prefix}getrole`.length + 1)
 			.trim()
 			.toLowerCase();
 		const roleId = await SelfAssignRoles.getId(ctx.msg.guild!.id, roleName);
@@ -15,10 +15,10 @@ let newCommand: Command = {
 			return;
 		}
 		try {
-			ctx.msg.member!.roles.remove(roleId, "Requested");
+			ctx.msg.member!.roles.add(roleId, "Requested");
 			ctx.msg.react("☑");
 		} catch (e) {
-			ctx.msg.channel.send("Something went wrong while taking that role.");
+			ctx.msg.channel.send("Something went wrong while giving you the role.");
 		}
 	},
 };

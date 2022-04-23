@@ -1,5 +1,5 @@
-import { Command } from "../interfaces/Command";
-import { AutoResponses } from "../db/AutoResponses";
+import { Command } from "../../interfaces/Command";
+import { AutoResponses } from "../../db/AutoResponses";
 
 let newCommand: Command = {
 	name: "addautoresponse",
