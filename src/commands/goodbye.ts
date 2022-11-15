@@ -1,3 +1,4 @@
+import * as Discord from "discord.js";
 import { Command } from "../interfaces/Command";
 import { ServerConfigs } from "../db/ServerConfigs";
 
@@ -17,7 +18,10 @@ let newCommand: Command = {
 				ctx.msg.channel.send("Unable to get channel with this id.");
 				return;
 			}
-			if (goodbyeChannel.type != "text") {
+			if (
+				!goodbyeChannel ||
+				goodbyeChannel.type != Discord.ChannelType.GuildText
+			) {
 				ctx.msg.channel.send("Must be a text channel.");
 				return;
 			}

@@ -1,4 +1,4 @@
-import Discord = require("discord.js");
+import * as Discord from "discord.js";
 import { join as pathJoin } from "path";
 
 import { ConfigLoader } from "./ConfigLoader";
@@ -13,12 +13,9 @@ import { handleBirthdays } from "./BirthdayHandler";
 	console.log("Starting FjordFursBot...");
 	console.log("Loading commands...");
 	let loadedCommands = new Map<string, Command>();
-	// let commandsDir = readdirSync(pathJoin(__dirname, "commands")).filter((f) =>
-	// 	f.endsWith(".js")
-	// );
 	let commandPaths = new Array<string>();
 	walkDirSync(pathJoin(__dirname, "commands"), commandPaths);
-	commandPaths = commandPaths.filter(e => e.endsWith(".js"));
+	commandPaths = commandPaths.filter((e) => e.endsWith(".js"));
 	for (let commandFile of commandPaths) {
 		const command: Command = require(commandFile);
 		loadedCommands.set(command.name, command);
@@ -39,7 +36,15 @@ import { handleBirthdays } from "./BirthdayHandler";
 	console.log("Caches populated");
 
 	console.log("Connecting to Discord...");
-	const bot = new Discord.Client();
+	const bot = new Discord.Client({
+		intents: [
+			Discord.GatewayIntentBits.Guilds,
+			Discord.GatewayIntentBits.GuildMessages,
+			Discord.GatewayIntentBits.MessageContent,
+			Discord.GatewayIntentBits.DirectMessageReactions,
+			Discord.GatewayIntentBits.GuildMembers,
+		],
+	});
 
 	bot.on("ready", async () => {
 		console.log("Connected to Discord.");
@@ -66,7 +71,7 @@ import { handleBirthdays } from "./BirthdayHandler";
 		}, 1000 * 60 * 60 * 24);
 	});
 
-	bot.on("message", (msg: Discord.Message) => {
+	bot.on("messageCreate", (msg: Discord.Message) => {
 		if (msg.author.bot) return;
 		// Check all commands
 		if (msg.content.startsWith(config.prefix)) {
@@ -83,7 +88,7 @@ import { handleBirthdays } from "./BirthdayHandler";
 					return;
 				} else if (
 					commandObj.adminOnly &&
-					!msg.member!.hasPermission("ADMINISTRATOR")
+					!msg.member!.permissions.has("Administrator")
 				) {
 					msg.channel.send(
 						"You need to be an administrator to use that command."
@@ -113,7 +118,7 @@ import { handleBirthdays } from "./BirthdayHandler";
 					(!ar.exact && msg.content.indexOf(ar.trigger) != -1)
 				) {
 					const response = AutoResponses.get(msg.guild.id, ar.trigger)?.reply;
-					msg.channel.send(response);
+					msg.channel.send(response!);
 				}
 			}
 		}
@@ -131,7 +136,12 @@ import { handleBirthdays } from "./BirthdayHandler";
 			} catch (_: unknown) {
 				return;
 			}
-			if (welcomeChannel.type != "text") return;
+			if (
+				!welcomeChannel ||
+				welcomeChannel.type != Discord.ChannelType.GuildText
+			) {
+				return;
+			}
 			welcomeChannel = welcomeChannel as Discord.TextChannel;
 			let memberCount = "`unknown`";
 			try {
@@ -151,7 +161,7 @@ import { handleBirthdays } from "./BirthdayHandler";
 		}
 	});
 
-	bot.on("guildMemberRemove", async (member: Discord.GuildMember) => {
+	bot.on("guildMemberRemove", async (member) => {
 		// Handle goodbye messages
 		let serverConfig = ServerConfigs.get(member.guild.id);
 		if (serverConfig.goodbyeChannelId && serverConfig.goodbyeMessage) {
@@ -163,7 +173,12 @@ import { handleBirthdays } from "./BirthdayHandler";
 			} catch (_: unknown) {
 				return;
 			}
-			if (goodbyeChannel.type != "text") return;
+			if (
+				!goodbyeChannel ||
+				goodbyeChannel.type != Discord.ChannelType.GuildText
+			) {
+				return;
+			}
 			goodbyeChannel = goodbyeChannel as Discord.TextChannel;
 			let memberCount = "`unknown`";
 			try {

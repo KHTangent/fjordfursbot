@@ -1,5 +1,5 @@
 import { readdirSync, lstatSync } from "fs";
-import {join as pathJoin} from "path";
+import { join as pathJoin } from "path";
 
 const MAX_ALLOWED_YEARS = 200;
 
