@@ -1,3 +1,4 @@
+import * as Discord from "discord.js";
 import { Command } from "../interfaces/Command";
 import { ServerConfigs } from "../db/ServerConfigs";
 import { simpleDateString, simpleDateValidator } from "../utils";
@@ -6,32 +7,44 @@ import { Birthdays } from "../db/Birthdays";
 const DATE_REGEX = /(?<day>\d?\d).(?<month>\d?\d).(?<year>\d\d\d\d)/;
 
 let newCommand: Command = {
-	name: "remember-birthday",
-	guildOnly: true,
+	command: new Discord.SlashCommandBuilder()
+		.setName("remember-birthday")
+		.setDescription("Remember your birthday")
+		.setDMPermission(false)
+		.addStringOption((option) =>
+			option
+				.setName("date")
+				.setDescription('Your bithday, in dd.mm.yyyy, or "remove" to remove')
+				.setRequired(true)
+		) as Discord.SlashCommandBuilder,
 	async execute(ctx) {
 		const birthdaysChannel = ServerConfigs.get(
-			ctx.msg.guild!.id
+			ctx.interaction.guild!.id
 		).birthdaysChannel;
 		if (!birthdaysChannel) {
-			ctx.msg.channel.send("Birthdays are not enabled in this server");
+			ctx.interaction.reply("Birthdays are not enabled in this server");
 			return;
 		}
-		const match = DATE_REGEX.exec(ctx.msg.content);
+		const input = ctx.interaction.options.getString("date", true);
+		const match = DATE_REGEX.exec(input);
 		if (!match || !match.groups) {
-			if (ctx.msg.content.endsWith("remove")) {
+			if (input.startsWith("remove")) {
 				try {
-					await Birthdays.delete(ctx.msg.guild!.id, ctx.msg.author.id);
-					ctx.msg.channel.send("Birthday removed");
+					await Birthdays.delete(
+						ctx.interaction.guild!.id,
+						ctx.interaction.user.id
+					);
+					ctx.interaction.reply("Birthday removed");
 				} catch (_: unknown) {
-					ctx.msg.channel.send("Something went wrong when deleting birthday");
+					ctx.interaction.reply("Something went wrong when deleting birthday");
 				}
 			} else {
-				ctx.msg.channel.send(
+				ctx.interaction.reply(
 					"Invalid date provided.\n" +
-						`Usage: \`${ctx.botConfig.prefix}remember-birthday dd.mm.yyyy\`\n` +
+						`Usage: \`/remember-birthday dd.mm.yyyy\`\n` +
 						`Example if your birthday is the 2nd of April 1998: ` +
-						`\`${ctx.botConfig.prefix}remember-birthday 02.04.1998\`\n` +
-						`To forget a birthday, use \`${ctx.botConfig.prefix}remember-birthday remove\``
+						`\`/remember-birthday 02.04.1998\`\n` +
+						`To forget a birthday, use \`/remember-birthday remove\``
 				);
 			}
 			return;
@@ -40,24 +53,27 @@ let newCommand: Command = {
 		const month = parseInt(match.groups.month);
 		const year = parseInt(match.groups.year);
 		if (!simpleDateValidator(day, month, year)) {
-			ctx.msg.channel.send("That date is not valid");
+			ctx.interaction.reply("That date is not valid");
 			return;
 		}
 		try {
-			await Birthdays.delete(ctx.msg.guild!.id, ctx.msg.author.id);
+			await Birthdays.delete(
+				ctx.interaction.guild!.id,
+				ctx.interaction.user.id
+			);
 			await Birthdays.add({
-				guildId: ctx.msg.guild!.id,
-				userId: ctx.msg.author.id,
+				guildId: ctx.interaction.guild!.id,
+				userId: ctx.interaction.user.id,
 				day,
 				month,
 				year,
 			});
-			ctx.msg.channel.send(
+			ctx.interaction.reply(
 				"Your birthday has been set to the " +
 					simpleDateString(day, month, year)
 			);
 		} catch (_: unknown) {
-			ctx.msg.channel.send("Something went wrong while saving your birthday");
+			ctx.interaction.reply("Something went wrong while saving your birthday");
 		}
 	},
 };

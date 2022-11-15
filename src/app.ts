@@ -16,9 +16,11 @@ import { handleBirthdays } from "./BirthdayHandler";
 	let commandPaths = new Array<string>();
 	walkDirSync(pathJoin(__dirname, "commands"), commandPaths);
 	commandPaths = commandPaths.filter((e) => e.endsWith(".js"));
+	const commandBuilders = new Array<Discord.SlashCommandBuilder>();
 	for (let commandFile of commandPaths) {
 		const command: Command = require(commandFile);
-		loadedCommands.set(command.name, command);
+		loadedCommands.set(command.command.name, command);
+		commandBuilders.push(command.command);
 	}
 	console.log(`Loaded ${commandPaths.length} commands.`);
 
@@ -34,6 +36,13 @@ import { handleBirthdays } from "./BirthdayHandler";
 	await ServerConfigs.loadAll();
 	await AutoResponses.loadAll();
 	console.log("Caches populated");
+
+	console.log("Registering slash commands...");
+	const rest = new Discord.REST({ version: "10" }).setToken(config.token);
+	await rest.put(Discord.Routes.applicationCommands(config.clientId), {
+		body: commandBuilders.map((c) => c.toJSON()),
+	});
+	console.log("Commands have been registered");
 
 	console.log("Connecting to Discord...");
 	const bot = new Discord.Client({
@@ -71,39 +80,24 @@ import { handleBirthdays } from "./BirthdayHandler";
 		}, 1000 * 60 * 60 * 24);
 	});
 
-	bot.on("messageCreate", (msg: Discord.Message) => {
-		if (msg.author.bot) return;
-		// Check all commands
-		if (msg.content.startsWith(config.prefix)) {
-			let splitCommand = msg.content
-				.slice(config.prefix.length)
-				.trim()
-				.split(/ +/);
-			let command = splitCommand.shift()?.toLocaleLowerCase();
-
-			if (command && loadedCommands.has(command)) {
-				const commandObj = loadedCommands.get(command) as Command;
-				if (commandObj.guildOnly && !msg.guild) {
-					msg.channel.send("This command only works in servers.");
-					return;
-				} else if (
-					commandObj.adminOnly &&
-					!msg.member!.permissions.has("Administrator")
-				) {
-					msg.channel.send(
-						"You need to be an administrator to use that command."
-					);
-					return;
-				}
-				commandObj.execute({
-					bot: bot,
-					botConfig: config,
-					msg: msg,
-				});
-			}
+	bot.on("interactionCreate", (interaction) => {
+		if (!interaction.isChatInputCommand()) {
+			return;
 		}
+		const command = loadedCommands.get(interaction.commandName);
+		if (command) {
+			command.execute({
+				bot,
+				interaction,
+				botConfig: config,
+			});
+		}
+	});
+
+	bot.on("messageCreate", (msg) => {
+		if (msg.author.bot) return;
 		// Check for autoresponses
-		else if (msg.guild) {
+		if (msg.guild) {
 			const serverConfig = ServerConfigs.get(msg.member!.guild.id);
 			if (
 				serverConfig.noAutoResponseRole &&

@@ -3,32 +3,28 @@ import { Command } from "../interfaces/Command";
 import { ServerConfigs } from "../db/ServerConfigs";
 
 let newCommand: Command = {
-	name: "setbirthdayschannel",
-	guildOnly: true,
-	adminOnly: true,
+	command: new Discord.SlashCommandBuilder()
+		.setName("setbirthdayschannel")
+		.setDescription("Sets channel to wish people happy birthday in")
+		.setDMPermission(false)
+		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+		.addChannelOption((option) =>
+			option
+				.setName("channel")
+				.setDescription("Birthday channel")
+				.setRequired(true)
+				.addChannelTypes(Discord.ChannelType.GuildText)
+		) as Discord.SlashCommandBuilder,
 	async execute(ctx) {
-		let id = ctx.msg.content
-			.substring(`${ctx.botConfig.prefix}setbirthdayschannel`.length + 1)
-			.trim();
-		let channel;
+		const channel = ctx.interaction.options.getChannel("channel", true);
+		const config = ServerConfigs.get(ctx.interaction.guild!.id);
+		config.birthdaysChannel = channel.id;
 		try {
-			channel = await ctx.bot.channels.fetch(id);
-		} catch (_: unknown) {
-			ctx.msg.channel.send("Unable to get channel with this id.");
-			return;
-		}
-		if (!channel || channel.type != Discord.ChannelType.GuildText) {
-			ctx.msg.channel.send("Must be a text channel.");
-			return;
-		}
-		const config = ServerConfigs.get(ctx.msg.guild!.id);
-		config.birthdaysChannel = id;
-		try {
-			await ServerConfigs.set(ctx.msg.guild!.id, config);
-			ctx.msg.channel.send(`Birthday message channel set to <#${id}>`);
+			await ServerConfigs.set(ctx.interaction.guild!.id, config);
+			ctx.interaction.reply(`Birthday message channel set to <#${channel.id}>`);
 		} catch (e: unknown) {
 			if (e instanceof Error) {
-				ctx.msg.channel.send("Error saving: " + e.message);
+				ctx.interaction.reply("Error saving: " + e.message);
 			}
 		}
 	},

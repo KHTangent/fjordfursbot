@@ -1,14 +1,17 @@
+import * as Discord from "discord.js";
 import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
-	name: "about",
+	command: new Discord.SlashCommandBuilder()
+		.setName("about")
+		.setDescription("Get info about the bot"),
 	execute(ctx) {
-		ctx.msg.channel.send(
+		ctx.interaction.reply(
 			"Hello, I'm **FjordFursBot**!\n" +
 				"By KHTangent\n" +
 				"Licensed under the MIT License.\n" +
 				"<https://github.com/KHTangent/FjordFursBot>\n" +
-				`Version 0.7.0`
+				`Version 0.8.0`
 		);
 	},
 };

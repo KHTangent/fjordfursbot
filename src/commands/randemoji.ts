@@ -1,3 +1,4 @@
+import * as Discord from "discord.js";
 import * as Emoji from "node-emoji";
 import { Command } from "../interfaces/Command";
 
@@ -122,20 +123,28 @@ const CreatureEmojis = [
 ];
 
 let newCommand: Command = {
-	name: "randemoji",
+	command: new Discord.SlashCommandBuilder()
+		.setName("randemoji")
+		.setDescription("Generate random emojis")
+		.addIntegerOption((option) =>
+			option
+				.setName("amount")
+				.setDescription("How many emoji to generate")
+				.setMinValue(1)
+				.setMaxValue(50)
+				.setRequired(true)
+		)
+		.addBooleanOption((option) =>
+			option
+				.setName("animal")
+				.setDescription("Wether the first emoji should be an animal")
+				.setRequired(false)
+		) as Discord.SlashCommandBuilder,
 	execute(ctx) {
-		let count = 3;
-		const messageParts = ctx.msg.content.split(" ");
-		if (messageParts.length > 1) {
-			const parsed = parseInt(messageParts[1]);
-			if (isNaN(parsed) || parsed < 1 || parsed > 50) {
-				ctx.msg.channel.send("Emoji count must be in the range 1-50");
-				return;
-			}
-			count = parsed;
-		}
+		let count = ctx.interaction.options.getInteger("amount", true);
+		const startWithAnimal = ctx.interaction.options.getBoolean("animal");
 		let reply = "Your emojis: ";
-		if (messageParts.length > 2 && messageParts[2].startsWith("a")) {
+		if (startWithAnimal) {
 			reply +=
 				CreatureEmojis[Math.floor(Math.random() * CreatureEmojis.length)];
 			--count;
@@ -143,7 +152,7 @@ let newCommand: Command = {
 		for (let i = 0; i < count; ++i) {
 			reply += Emoji.random().emoji;
 		}
-		ctx.msg.channel.send(reply);
+		ctx.interaction.reply(reply);
 	},
 };
 

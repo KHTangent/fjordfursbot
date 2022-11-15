@@ -1,14 +1,12 @@
-import { Client, Message } from "discord.js";
+import * as Discord from "discord.js";
 
 export interface Command {
-	name: string;
-	adminOnly?: boolean;
-	guildOnly?: boolean;
+	command: Discord.SlashCommandBuilder;
 	execute(ctx: CommandContext): void;
 }
 
 export interface CommandContext {
-	msg: Message;
-	bot: Client;
+	interaction: Discord.ChatInputCommandInteraction;
+	bot: Discord.Client;
 	botConfig: BotConfig;
 }

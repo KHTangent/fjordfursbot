@@ -1,21 +1,32 @@
+import * as Discord from "discord.js";
 import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
-	name: "uwu",
+	command: new Discord.SlashCommandBuilder()
+		.setName("uwu")
+		.setDescription("Convert text to uwuspeech")
+		.setDMPermission(true)
+		.addStringOption((option) =>
+			option
+				.setRequired(false)
+				.setName("text")
+				.setDescription("Text to uwuize. If blank, use previous message")
+		) as Discord.SlashCommandBuilder,
 	async execute(ctx) {
-		var toUwuize = "";
-		if (ctx.msg.content.length == `${ctx.botConfig.prefix}uwu`.length) {
+		let toUwuize = "";
+		const textParam = ctx.interaction.options.getString("text", false);
+		if (textParam === null) {
 			try {
-				var messages = await ctx.msg.channel.messages.fetch({ limit: 2 });
+				var messages = await ctx.interaction.channel!.messages.fetch({
+					limit: 1,
+				});
 				toUwuize = messages.last()!.content;
 			} catch (e) {
-				ctx.msg.channel.send("Something went wrong");
+				ctx.interaction.reply("Something went wrong");
 				return;
 			}
 		} else {
-			toUwuize = ctx.msg.content
-				.substring(`${ctx.botConfig.prefix}uwu `.length)
-				.trim();
+			toUwuize = textParam;
 		}
 		toUwuize = toUwuize
 			.replace(/r/g, "w")
@@ -28,7 +39,7 @@ let newCommand: Command = {
 			.replace(/That/g, "Dat")
 			.replace(/that/g, "dat");
 		toUwuize += " uwu";
-		ctx.msg.channel.send(toUwuize);
+		ctx.interaction.reply(toUwuize);
 	},
 };
 

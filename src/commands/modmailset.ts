@@ -3,66 +3,77 @@ import { ServerConfigs } from "../db/ServerConfigs";
 import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
-	name: "modmailset",
-	guildOnly: true,
-	adminOnly: true,
+	command: new Discord.SlashCommandBuilder()
+		.setName("modmailset")
+		.setDescription("Set modmail options")
+		.setDMPermission(false)
+		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+		.addSubcommand((sub) =>
+			sub
+				.setName("channel")
+				.setDescription("Change channel to forward modmails to")
+				.addChannelOption((option) =>
+					option
+						.setName("channel")
+						.setDescription("Channel to forward modmails to")
+						.setRequired(true)
+						.addChannelTypes(Discord.ChannelType.GuildText)
+				)
+		)
+		.addSubcommand((sub) =>
+			sub
+				.setName("keyword")
+				.setDescription("Change server keyword")
+				.addStringOption((option) =>
+					option
+						.setName("keyword")
+						.setDescription("Server name users should use to contact staff")
+						.setMinLength(3)
+						.setMaxLength(25)
+						.setRequired(true)
+				)
+		) as Discord.SlashCommandBuilder,
 	async execute(ctx) {
-		if (
-			ctx.msg.content.startsWith(`${ctx.botConfig.prefix}modmailset channel`)
-		) {
-			let id = ctx.msg.content
-				.substring(`${ctx.botConfig.prefix}modmailset channel`.length + 1)
-				.trim();
-			let channel;
+		const subcommand = ctx.interaction.options.getSubcommand();
+		if (subcommand === "channel") {
+			let channel = ctx.interaction.options.getChannel("channel", true);
+			const config = ServerConfigs.get(ctx.interaction.guild!.id);
+			config.modmailChannelId = channel.id;
 			try {
-				channel = await ctx.bot.channels.fetch(id);
-			} catch (_: unknown) {
-				ctx.msg.channel.send("Unable to get channel with this id.");
-				return;
-			}
-			if (!channel || channel.type != Discord.ChannelType.GuildText) {
-				ctx.msg.channel.send("Must be a text channel.");
-				return;
-			}
-			const config = ServerConfigs.get(ctx.msg.guild!.id);
-			config.modmailChannelId = id;
-			try {
-				await ServerConfigs.set(ctx.msg.guild!.id, config);
-				ctx.msg.channel.send(`Modmail message channel set to <#${id}>`);
+				await ServerConfigs.set(ctx.interaction.guild!.id, config);
+				ctx.interaction.reply(
+					`Modmail message channel set to <#${channel.id}>`
+				);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
-					ctx.msg.channel.send("Error saving: " + e.message);
+					ctx.interaction.reply("Error saving: " + e.message);
 				}
 			}
-		} else if (
-			ctx.msg.content.startsWith(`${ctx.botConfig.prefix}modmailset servername`)
-		) {
-			var serverName = ctx.msg.content
-				.substring(
-					`${ctx.botConfig.prefix.length}modmailset servername`.length + 1
-				)
-				.trim();
+		} else if (subcommand === "keyword") {
+			const serverName = ctx.interaction.options.getString("keyword", true);
 			if (serverName == "" || serverName.includes(" ")) {
-				ctx.msg.channel.send("Server name must be a single word");
+				ctx.interaction.reply("Server name must be a single word");
 				return;
 			}
-			let gID = ServerConfigs.getIdFromModmailName(ctx.msg.guild!.id);
-			if (gID == "") {
-				const config = ServerConfigs.get(ctx.msg.guild!.id);
+			let gID = ServerConfigs.getIdFromModmailName(ctx.interaction.guild!.id);
+			if (gID === "") {
+				const config = ServerConfigs.get(ctx.interaction.guild!.id);
 				config.modmailServerName = serverName;
 				try {
-					await ServerConfigs.set(ctx.msg.guild!.id, config);
-					ctx.msg.channel.send(`Modmail server name set.`);
+					await ServerConfigs.set(ctx.interaction.guild!.id, config);
+					ctx.interaction.reply(`Modmail server name set.`);
 				} catch (e: unknown) {
 					if (e instanceof Error) {
-						ctx.msg.channel.send("Error saving: " + e.message);
+						ctx.interaction.reply("Error saving: " + e.message);
 					}
 				}
 			} else {
-				ctx.msg.channel.send(
+				ctx.interaction.reply(
 					"Server name already in use, please use a different name."
 				);
 			}
+		} else {
+			ctx.interaction.reply("Please use a subcommand");
 		}
 	},
 };

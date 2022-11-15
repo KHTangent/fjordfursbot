@@ -53,7 +53,7 @@ Autoresponses are replies the bot makes to specific words or phrases. A user can
 1. Install Node.js, and open a command prompt/shell
 2. Clone the project with `git clone https://github.com/KHTangent/fjordfursbot`
 3. In the new directory, run `npm install`
-4. Create a copy of `config-example.json` named `config.json`, and set your Discord bot token there
+4. Create a copy of `config-example.json` named `config.json`, and set your Discord bot token and client ID there
 5. Install `db-migrate` from npm: `npm install -g db-migrate`
 6. Run database migrations: `db-migrate up`
 7. Compile and run the bot with `npm start` from the project directory
