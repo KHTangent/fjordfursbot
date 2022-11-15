@@ -67,6 +67,14 @@ export class AutoResponses {
 			"DELETE FROM autoResponses WHERE guildId = ? AND trigger = ?",
 			[guildId, trigger]
 		);
+		if (res.changes != 0) {
+			const index = this.cache
+				.get(guildId)
+				?.findIndex((e) => e.trigger === trigger);
+			if (index !== undefined) {
+				this.cache.get(guildId)!.splice(index, 1);
+			}
+		}
 		return res.changes != 0;
 	}
 
