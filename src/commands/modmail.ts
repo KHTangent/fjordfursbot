@@ -1,37 +1,44 @@
-import Discord = require("discord.js");
+import * as Discord from "discord.js";
 import { ServerConfigs } from "../db/ServerConfigs";
 import { Command } from "../interfaces/Command";
 
 let newCommand: Command = {
-	name: "modmail",
+	command: new Discord.SlashCommandBuilder()
+		.setName("modmail")
+		.setDescription("Send a modmail to some server")
+		.setDefaultMemberPermissions(0)
+		.setDMPermission(true)
+		.addStringOption((option) =>
+			option
+				.setName("server")
+				.setDescription("Name of server to send modmail to")
+				.setMinLength(3)
+				.setMaxLength(25)
+				.setRequired(true)
+		)
+		.addStringOption((option) =>
+			option
+				.setName("message")
+				.setDescription("The message to be sent to server staff")
+				.setRequired(true)
+				.setMaxLength(2000)
+		) as Discord.SlashCommandBuilder,
 	async execute(ctx) {
-		if (ctx.msg.member) {
-			ctx.msg.channel.send(
-				"This command can only be used in private messages."
-			);
-			return;
-		}
-		var splitMessage = ctx.msg.content.split(" ");
-		if (splitMessage.length < 3) {
-			ctx.msg.channel.send(
-				`Usage: \`${ctx.botConfig.prefix}modmail [ServerName] [message]\``
-			);
-			return;
-		}
-
-		const gID = ServerConfigs.getIdFromModmailName(splitMessage[1]);
+		const serverName = ctx.interaction.options.getString("server", true);
+		const message = ctx.interaction.options.getString("message", true);
+		const gID = ServerConfigs.getIdFromModmailName(serverName);
 		if (!gID || !ServerConfigs.get(gID).modmailChannelId) {
-			ctx.msg.channel.send("Invalid server name.");
+			ctx.interaction.reply("Invalid server name.");
 			return;
 		}
 		try {
 			const channel = (await ctx.bot.channels.fetch(
 				ServerConfigs.get(gID).modmailChannelId!
 			)) as Discord.TextChannel;
-			channel.send(splitMessage.slice(2).join(" "));
-			ctx.msg.react("☑");
+			channel.send(message);
+			ctx.interaction.reply("Modmail has been sent");
 		} catch (e) {
-			ctx.msg.channel.send(
+			ctx.interaction.reply(
 				"Could not send modmail, please contact the server owner."
 			);
 		}

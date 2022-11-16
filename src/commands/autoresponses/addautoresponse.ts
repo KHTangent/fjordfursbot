@@ -1,44 +1,55 @@
+import * as Discord from "discord.js";
 import { Command } from "../../interfaces/Command";
 import { AutoResponses } from "../../db/AutoResponses";
 
 let newCommand: Command = {
-	name: "addautoresponse",
-	guildOnly: true,
-	adminOnly: true,
+	command: new Discord.SlashCommandBuilder()
+		.setName("addautoresponse")
+		.setDescription("Add a new autoresponse")
+		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+		.setDMPermission(false)
+		.addStringOption((option) =>
+			option
+				.setName("trigger")
+				.setDescription("Word or phrase that should trigger the autoresponse")
+				.setRequired(true)
+		)
+		.addStringOption((option) =>
+			option
+				.setName("exact")
+				.setDescription("Wether the trigger should be the entire message")
+				.setRequired(true)
+				.addChoices(
+					{
+						name: "exact",
+						value: "exact",
+					},
+					{
+						name: "anywhere",
+						value: "anywhere",
+					}
+				)
+		)
+		.addStringOption((option) =>
+			option
+				.setName("response")
+				.setDescription("What the bot should respond with")
+				.setRequired(true)
+		) as Discord.SlashCommandBuilder,
 	async execute(ctx) {
-		const commandParts = ctx.msg.content.split("|").map((e) => e.trim());
-		const prefix = ctx.botConfig.prefix;
-		if (commandParts.length != 3) {
-			ctx.msg.channel.send(
-				"Usage: ```" +
-					prefix +
-					"addautoresponse trigger | e/a | response```\n" +
-					"Use `e` to require the trigger to be the only contents of the message, or `a` " +
-					"if the trigger could be somewhere within a larger message"
-			);
-			return;
-		}
-		const trigger = commandParts[0].substring(
-			`${prefix}addautoresponse`.length + 1
-		);
-		const exactOrAnywhere = commandParts[1];
-		const reply = commandParts[2];
-		if (exactOrAnywhere != "e" && exactOrAnywhere != "a") {
-			ctx.msg.channel.send(
-				"Scope must be `e` (exact match) or `a` (any match)"
-			);
-			return;
-		}
+		const trigger = ctx.interaction.options.getString("trigger", true);
+		const exact = ctx.interaction.options.getString("exact", true) === "exact";
+		const reply = ctx.interaction.options.getString("reply", true);
 		try {
 			await AutoResponses.add({
-				guildId: ctx.msg.guild!.id,
-				reply: reply,
-				trigger: trigger,
-				exact: exactOrAnywhere == "e",
+				guildId: ctx.interaction.guild!.id,
+				trigger,
+				exact,
+				reply,
 			});
-			ctx.msg.channel.send("Autoresponse added");
+			ctx.interaction.reply("Autoresponse added");
 		} catch (e) {
-			ctx.msg.channel.send("Something went wrong when adding autoresposne.");
+			ctx.interaction.reply("Something went wrong when adding autoresposne.");
 		}
 	},
 };

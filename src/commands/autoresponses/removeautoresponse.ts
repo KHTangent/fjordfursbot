@@ -1,24 +1,33 @@
+import * as Discord from "discord.js";
 import { Command } from "../../interfaces/Command";
 import { AutoResponses } from "../../db/AutoResponses";
 
 let newCommand: Command = {
-	name: "removeautoresponse",
-	guildOnly: true,
-	adminOnly: true,
+	command: new Discord.SlashCommandBuilder()
+		.setName("removeautoresponse")
+		.setDescription("Remove an autoresponse")
+		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+		.setDMPermission(false)
+		.addStringOption((option) =>
+			option
+				.setName("trigger")
+				.setDescription("Trigger for autoresponse to remove")
+				.setRequired(true)
+		) as Discord.SlashCommandBuilder,
 	async execute(ctx) {
-		const prefix = ctx.botConfig.prefix;
-		const trigger = ctx.msg.content.substring(
-			`${prefix}removeautoresponse `.length
-		);
+		const trigger = ctx.interaction.options.getString("trigger", true);
 		try {
-			var removed = await AutoResponses.remove(ctx.msg.guild!.id, trigger);
+			var removed = await AutoResponses.remove(
+				ctx.interaction.guild!.id,
+				trigger
+			);
 			if (removed) {
-				ctx.msg.channel.send("Autoresponse removed");
+				ctx.interaction.reply("Autoresponse removed");
 			} else {
-				ctx.msg.channel.send("No auto-response with this trigger found");
+				ctx.interaction.reply("No auto-response with this trigger found");
 			}
 		} catch (e) {
-			ctx.msg.channel.send("Something went wrong when removing autoresposne.");
+			ctx.interaction.reply("Something went wrong when removing autoresposne.");
 		}
 	},
 };

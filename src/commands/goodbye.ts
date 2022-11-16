@@ -3,52 +3,62 @@ import { Command } from "../interfaces/Command";
 import { ServerConfigs } from "../db/ServerConfigs";
 
 let newCommand: Command = {
-	name: "goodbye",
-	adminOnly: true,
-	guildOnly: true,
+	command: new Discord.SlashCommandBuilder()
+		.setName("goodbye")
+		.setDescription("Set goodbye options")
+		.setDMPermission(false)
+		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+		.addSubcommand((sub) =>
+			sub
+				.setName("channel")
+				.setDescription(
+					"Change channel to announce when someone leaves the server"
+				)
+				.addChannelOption((option) =>
+					option
+						.setName("channel")
+						.setDescription("Channel to post goodbye in")
+						.setRequired(true)
+						.addChannelTypes(Discord.ChannelType.GuildText)
+				)
+		)
+		.addSubcommand((sub) =>
+			sub
+				.setName("message")
+				.setDescription("Set goodbye message")
+				.addStringOption((option) =>
+					option
+						.setName("message")
+						.setDescription("Goodbye message content")
+						.setRequired(true)
+				)
+		) as Discord.SlashCommandBuilder,
 	async execute(ctx) {
-		if (ctx.msg.content.startsWith(`${ctx.botConfig.prefix}goodbye channel`)) {
-			var id = ctx.msg.content
-				.substring(`${ctx.botConfig.prefix}goodbye channel`.length + 1)
-				.trim();
-			let goodbyeChannel;
+		const subcommand = ctx.interaction.options.getSubcommand();
+		if (subcommand === "channel") {
+			const channel = ctx.interaction.options.getChannel("channel", true);
+			const oldConfig = ServerConfigs.get(ctx.interaction.guild!.id);
+			oldConfig.goodbyeChannelId = channel.id;
 			try {
-				goodbyeChannel = await ctx.bot.channels.fetch(id);
-			} catch (_: unknown) {
-				ctx.msg.channel.send("Unable to get channel with this id.");
-				return;
-			}
-			if (
-				!goodbyeChannel ||
-				goodbyeChannel.type != Discord.ChannelType.GuildText
-			) {
-				ctx.msg.channel.send("Must be a text channel.");
-				return;
-			}
-			const oldConfig = ServerConfigs.get(ctx.msg.guild!.id);
-			oldConfig.goodbyeChannelId = id;
-			try {
-				await ServerConfigs.set(ctx.msg.guild!.id, oldConfig);
-				ctx.msg.channel.send(`Goodbye message channel set to <#${id}>`);
+				await ServerConfigs.set(ctx.interaction.guild!.id, oldConfig);
+				ctx.interaction.reply(
+					`Goodbye message channel set to <#${channel.id}>`
+				);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
-					ctx.msg.channel.send("Error saving: " + e.message);
+					ctx.interaction.reply("Error saving: " + e.message);
 				}
 			}
-		} else if (
-			ctx.msg.content.startsWith(`${ctx.botConfig.prefix}goodbye message`)
-		) {
-			var message = ctx.msg.content
-				.substring(`${ctx.botConfig.prefix}goodbye message`.length + 1)
-				.trim();
-			const oldConfig = ServerConfigs.get(ctx.msg.guild!.id);
+		} else if (subcommand === "message") {
+			const message = ctx.interaction.options.getString("message", true);
+			const oldConfig = ServerConfigs.get(ctx.interaction.guild!.id);
 			oldConfig.goodbyeMessage = message;
 			try {
-				await ServerConfigs.set(ctx.msg.guild!.id, oldConfig);
-				ctx.msg.channel.send(`Goodbye message set.`);
+				await ServerConfigs.set(ctx.interaction.guild!.id, oldConfig);
+				ctx.interaction.reply(`Goodbye message set.`);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
-					ctx.msg.channel.send("Error saving: " + e.message);
+					ctx.interaction.reply("Error saving: " + e.message);
 				}
 			}
 		}

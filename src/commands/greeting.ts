@@ -3,52 +3,60 @@ import { Command } from "../interfaces/Command";
 import { ServerConfigs } from "../db/ServerConfigs";
 
 let newCommand: Command = {
-	name: "greeting",
-	guildOnly: true,
-	adminOnly: true,
+	command: new Discord.SlashCommandBuilder()
+		.setName("greeting")
+		.setDescription("Set greeting options")
+		.setDMPermission(false)
+		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+		.addSubcommand((sub) =>
+			sub
+				.setName("channel")
+				.setDescription("Change channel to greet members in")
+				.addChannelOption((option) =>
+					option
+						.setName("channel")
+						.setDescription("Channel to greet in")
+						.setRequired(true)
+						.addChannelTypes(Discord.ChannelType.GuildText)
+				)
+		)
+		.addSubcommand((sub) =>
+			sub
+				.setName("message")
+				.setDescription("Set greeting message")
+				.addStringOption((option) =>
+					option
+						.setName("message")
+						.setDescription("Greeting message content")
+						.setRequired(true)
+				)
+		) as Discord.SlashCommandBuilder,
 	async execute(ctx) {
-		if (ctx.msg.content.startsWith(`${ctx.botConfig.prefix}greeting channel`)) {
-			var id = ctx.msg.content
-				.substring(`${ctx.botConfig.prefix}greeting channel`.length + 1)
-				.trim();
-			let greetingChannel;
+		const subcommand = ctx.interaction.options.getSubcommand();
+		if (subcommand === "channel") {
+			const channel = ctx.interaction.options.getChannel("channel", true);
+			const oldConfig = ServerConfigs.get(ctx.interaction.guild!.id);
+			oldConfig.welcomeChannelId = channel.id;
 			try {
-				greetingChannel = await ctx.bot.channels.fetch(id);
-			} catch (e: unknown) {
-				ctx.msg.channel.send("Unable to get channel with this id.");
-				return;
-			}
-			if (
-				!greetingChannel ||
-				greetingChannel.type != Discord.ChannelType.GuildText
-			) {
-				ctx.msg.channel.send("Must be a text channel.");
-				return;
-			}
-			const oldConfig = ServerConfigs.get(ctx.msg.guild!.id);
-			oldConfig.welcomeChannelId = id;
-			try {
-				await ServerConfigs.set(ctx.msg.guild!.id, oldConfig);
-				ctx.msg.channel.send(`Welcome message channel set to <#${id}>`);
+				await ServerConfigs.set(ctx.interaction.guild!.id, oldConfig);
+				ctx.interaction.reply(
+					`Welcome message channel set to <#${channel.id}>`
+				);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
-					ctx.msg.channel.send("Error saving: " + e.message);
+					ctx.interaction.reply("Error saving: " + e.message);
 				}
 			}
-		} else if (
-			ctx.msg.content.startsWith(`${ctx.botConfig.prefix}greeting message`)
-		) {
-			var message = ctx.msg.content
-				.substring(`${ctx.botConfig.prefix}greeting message`.length + 1)
-				.trim();
-			const oldConfig = ServerConfigs.get(ctx.msg.guild!.id);
+		} else if (subcommand === "message") {
+			const message = ctx.interaction.options.getString("message", true);
+			const oldConfig = ServerConfigs.get(ctx.interaction.guild!.id);
 			oldConfig.welcomeMessage = message;
 			try {
-				await ServerConfigs.set(ctx.msg.guild!.id, oldConfig);
-				ctx.msg.channel.send(`Welcome message set.`);
+				await ServerConfigs.set(ctx.interaction.guild!.id, oldConfig);
+				ctx.interaction.reply(`Welcome message set.`);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
-					ctx.msg.channel.send("Error saving: " + e.message);
+					ctx.interaction.reply("Error saving: " + e.message);
 				}
 			}
 		}
