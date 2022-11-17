@@ -15,28 +15,28 @@ let newCommand: Command = {
 				.setRequired(true)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const role = ctx.interaction.options.getRole("role", true);
+	async execute(interaction) {
+		const role = interaction.options.getRole("role", true);
 		// Verify that the role isn't there already
 		if (
 			(await SelfAssignRoles.getId(
-				ctx.interaction.guild!.id,
+				interaction.guild!.id,
 				role.name.toLowerCase()
 			)) != ""
 		) {
-			ctx.interaction.reply("This role has already been added.");
+			interaction.reply("This role has already been added.");
 			return;
 		}
 		try {
-			await SelfAssignRoles.add(ctx.interaction.guild!.id, {
+			await SelfAssignRoles.add(interaction.guild!.id, {
 				id: role.id,
 				name: role.name.toLowerCase(),
 			});
 		} catch (e) {
-			ctx.interaction.reply("Error adding self-assignable role");
+			interaction.reply("Error adding self-assignable role");
 			return;
 		}
-		ctx.interaction.reply(`Role ${role.name} has been made self-assignable.`);
+		interaction.reply(`Role ${role.name} has been made self-assignable.`);
 	},
 };
 

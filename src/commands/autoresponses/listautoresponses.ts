@@ -9,8 +9,8 @@ let newCommand: Command = {
 		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
 		.setDMPermission(false)
 		.toJSON(),
-	async execute(ctx) {
-		const list = AutoResponses.list(ctx.interaction.guild!.id).map(
+	async execute(interaction) {
+		const list = AutoResponses.list(interaction.guild!.id).map(
 			(e) => (e.exact ? "e | " : "a | ") + e.trigger
 		);
 		const listMessage =
@@ -19,7 +19,7 @@ let newCommand: Command = {
 			"```" +
 			list.join("\n") +
 			"```";
-		ctx.interaction.reply(listMessage);
+		interaction.reply(listMessage);
 	},
 };
 

@@ -24,22 +24,22 @@ let newCommand: Command = {
 				.setMaxLength(2000)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const serverName = ctx.interaction.options.getString("server", true);
-		const message = ctx.interaction.options.getString("message", true);
+	async execute(interaction) {
+		const serverName = interaction.options.getString("server", true);
+		const message = interaction.options.getString("message", true);
 		const gID = ServerConfigs.getIdFromModmailName(serverName);
 		if (!gID || !ServerConfigs.get(gID).modmailChannelId) {
-			ctx.interaction.reply("Invalid server name.");
+			interaction.reply("Invalid server name.");
 			return;
 		}
 		try {
-			const channel = (await ctx.bot.channels.fetch(
+			const channel = (await interaction.client.channels.fetch(
 				ServerConfigs.get(gID).modmailChannelId!
 			)) as Discord.TextChannel;
 			channel.send(message);
-			ctx.interaction.reply("Modmail has been sent");
+			interaction.reply("Modmail has been sent");
 		} catch (e) {
-			ctx.interaction.reply(
+			interaction.reply(
 				"Could not send modmail, please contact the server owner."
 			);
 		}

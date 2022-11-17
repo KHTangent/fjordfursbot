@@ -34,47 +34,47 @@ let newCommand: Command = {
 				)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const subcommand = ctx.interaction.options.getSubcommand();
+	async execute(interaction) {
+		const subcommand = interaction.options.getSubcommand();
 		if (subcommand === "channel") {
-			let channel = ctx.interaction.options.getChannel("channel", true);
-			const config = ServerConfigs.get(ctx.interaction.guild!.id);
+			let channel = interaction.options.getChannel("channel", true);
+			const config = ServerConfigs.get(interaction.guild!.id);
 			config.modmailChannelId = channel.id;
 			try {
-				await ServerConfigs.set(ctx.interaction.guild!.id, config);
-				ctx.interaction.reply(
+				await ServerConfigs.set(interaction.guild!.id, config);
+				interaction.reply(
 					`Modmail message channel set to <#${channel.id}>`
 				);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
-					ctx.interaction.reply("Error saving: " + e.message);
+					interaction.reply("Error saving: " + e.message);
 				}
 			}
 		} else if (subcommand === "keyword") {
-			const serverName = ctx.interaction.options.getString("keyword", true);
+			const serverName = interaction.options.getString("keyword", true);
 			if (serverName == "" || serverName.includes(" ")) {
-				ctx.interaction.reply("Server name must be a single word");
+				interaction.reply("Server name must be a single word");
 				return;
 			}
-			let gID = ServerConfigs.getIdFromModmailName(ctx.interaction.guild!.id);
+			let gID = ServerConfigs.getIdFromModmailName(interaction.guild!.id);
 			if (gID === "") {
-				const config = ServerConfigs.get(ctx.interaction.guild!.id);
+				const config = ServerConfigs.get(interaction.guild!.id);
 				config.modmailServerName = serverName;
 				try {
-					await ServerConfigs.set(ctx.interaction.guild!.id, config);
-					ctx.interaction.reply(`Modmail server name set.`);
+					await ServerConfigs.set(interaction.guild!.id, config);
+					interaction.reply(`Modmail server name set.`);
 				} catch (e: unknown) {
 					if (e instanceof Error) {
-						ctx.interaction.reply("Error saving: " + e.message);
+						interaction.reply("Error saving: " + e.message);
 					}
 				}
 			} else {
-				ctx.interaction.reply(
+				interaction.reply(
 					"Server name already in use, please use a different name."
 				);
 			}
 		} else {
-			ctx.interaction.reply("Please use a subcommand");
+			interaction.reply("Please use a subcommand");
 		}
 	},
 };

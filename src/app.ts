@@ -87,11 +87,7 @@ import { handleBirthdays } from "./BirthdayHandler";
 		}
 		const command = loadedCommands.get(interaction.commandName);
 		if (command) {
-			command.execute({
-				bot,
-				interaction,
-				botConfig: config,
-			});
+			command.execute(interaction);
 		}
 	});
 

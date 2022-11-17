@@ -15,20 +15,20 @@ let newCommand: Command = {
 				.setRequired(true)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const trigger = ctx.interaction.options.getString("trigger", true);
+	async execute(interaction) {
+		const trigger = interaction.options.getString("trigger", true);
 		try {
 			var removed = await AutoResponses.remove(
-				ctx.interaction.guild!.id,
+				interaction.guild!.id,
 				trigger
 			);
 			if (removed) {
-				ctx.interaction.reply("Autoresponse removed");
+				interaction.reply("Autoresponse removed");
 			} else {
-				ctx.interaction.reply("No auto-response with this trigger found");
+				interaction.reply("No auto-response with this trigger found");
 			}
 		} catch (e) {
-			ctx.interaction.reply("Something went wrong when removing autoresposne.");
+			interaction.reply("Something went wrong when removing autoresposne.");
 		}
 	},
 };

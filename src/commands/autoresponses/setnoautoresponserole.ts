@@ -15,21 +15,21 @@ let newCommand: Command = {
 				.setRequired(false)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const role = ctx.interaction.options.getRole("role", false);
-		const oldConfig = ServerConfigs.get(ctx.interaction.guild!.id);
+	async execute(interaction) {
+		const role = interaction.options.getRole("role", false);
+		const oldConfig = ServerConfigs.get(interaction.guild!.id);
 		oldConfig.noAutoResponseRole = role ? role.id : undefined;
 		try {
-			await ServerConfigs.set(ctx.interaction.guild!.id, oldConfig);
+			await ServerConfigs.set(interaction.guild!.id, oldConfig);
 			if (!role) {
-				ctx.interaction.reply(`Ignore auto-response role has been unset`);
+				interaction.reply(`Ignore auto-response role has been unset`);
 			} else {
-				ctx.interaction.reply(
+				interaction.reply(
 					`Role ${role.name} has been set as ignore auto-response role.`
 				);
 			}
 		} catch (e: unknown) {
-			ctx.interaction.reply("Something went wrong saving the selected role.");
+			interaction.reply("Something went wrong saving the selected role.");
 		}
 	},
 };

@@ -32,36 +32,36 @@ let newCommand: Command = {
 				)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const subcommand = ctx.interaction.options.getSubcommand();
+	async execute(interaction) {
+		const subcommand = interaction.options.getSubcommand();
 		if (subcommand === "channel") {
-			const channel = ctx.interaction.options.getChannel("channel", true);
-			const oldConfig = ServerConfigs.get(ctx.interaction.guild!.id);
+			const channel = interaction.options.getChannel("channel", true);
+			const oldConfig = ServerConfigs.get(interaction.guild!.id);
 			oldConfig.welcomeChannelId = channel.id;
 			try {
-				await ServerConfigs.set(ctx.interaction.guild!.id, oldConfig);
-				ctx.interaction.reply(
+				await ServerConfigs.set(interaction.guild!.id, oldConfig);
+				interaction.reply(
 					`Welcome message channel set to <#${channel.id}>`
 				);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
-					ctx.interaction.reply("Error saving: " + e.message);
+					interaction.reply("Error saving: " + e.message);
 				}
 			}
 		} else if (subcommand === "message") {
-			const message = ctx.interaction.options.getString("message", true);
-			const oldConfig = ServerConfigs.get(ctx.interaction.guild!.id);
+			const message = interaction.options.getString("message", true);
+			const oldConfig = ServerConfigs.get(interaction.guild!.id);
 			oldConfig.welcomeMessage = message;
 			try {
-				await ServerConfigs.set(ctx.interaction.guild!.id, oldConfig);
-				ctx.interaction.reply(`Welcome message set.`);
+				await ServerConfigs.set(interaction.guild!.id, oldConfig);
+				interaction.reply(`Welcome message set.`);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
-					ctx.interaction.reply("Error saving: " + e.message);
+					interaction.reply("Error saving: " + e.message);
 				}
 			}
 		} else {
-			ctx.interaction.reply("Unknown subcommand");
+			interaction.reply("Unknown subcommand");
 		}
 	},
 };

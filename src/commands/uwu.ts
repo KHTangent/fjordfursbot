@@ -13,17 +13,17 @@ let newCommand: Command = {
 				.setDescription("Text to uwuize. If blank, use previous message")
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const textParam = ctx.interaction.options.getString("text", false);
+	async execute(interaction) {
+		const textParam = interaction.options.getString("text", false);
 		let toUwuize = "";
 		if (textParam === null) {
 			try {
-				var messages = await ctx.interaction.channel!.messages.fetch({
+				var messages = await interaction.channel!.messages.fetch({
 					limit: 1,
 				});
 				toUwuize = messages.last()!.content;
 			} catch (e) {
-				ctx.interaction.reply("Something went wrong");
+				interaction.reply("Something went wrong");
 				return;
 			}
 		} else {
@@ -40,7 +40,7 @@ let newCommand: Command = {
 			.replace(/That/g, "Dat")
 			.replace(/that/g, "dat");
 		toUwuize += " uwu";
-		ctx.interaction.reply(toUwuize);
+		interaction.reply(toUwuize);
 	},
 };
 

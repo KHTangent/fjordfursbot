@@ -16,16 +16,16 @@ let newCommand: Command = {
 				.addChannelTypes(Discord.ChannelType.GuildText)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const channel = ctx.interaction.options.getChannel("channel", true);
-		const config = ServerConfigs.get(ctx.interaction.guild!.id);
+	async execute(interaction) {
+		const channel = interaction.options.getChannel("channel", true);
+		const config = ServerConfigs.get(interaction.guild!.id);
 		config.birthdaysChannel = channel.id;
 		try {
-			await ServerConfigs.set(ctx.interaction.guild!.id, config);
-			ctx.interaction.reply(`Birthday message channel set to <#${channel.id}>`);
+			await ServerConfigs.set(interaction.guild!.id, config);
+			interaction.reply(`Birthday message channel set to <#${channel.id}>`);
 		} catch (e: unknown) {
 			if (e instanceof Error) {
-				ctx.interaction.reply("Error saving: " + e.message);
+				interaction.reply("Error saving: " + e.message);
 			}
 		}
 	},

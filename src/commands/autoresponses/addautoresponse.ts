@@ -37,20 +37,20 @@ let newCommand: Command = {
 				.setRequired(true)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const trigger = ctx.interaction.options.getString("trigger", true);
-		const exact = ctx.interaction.options.getString("exact", true) === "exact";
-		const reply = ctx.interaction.options.getString("reply", true);
+	async execute(interaction) {
+		const trigger = interaction.options.getString("trigger", true);
+		const exact = interaction.options.getString("exact", true) === "exact";
+		const reply = interaction.options.getString("reply", true);
 		try {
 			await AutoResponses.add({
-				guildId: ctx.interaction.guild!.id,
+				guildId: interaction.guild!.id,
 				trigger,
 				exact,
 				reply,
 			});
-			ctx.interaction.reply("Autoresponse added");
+			interaction.reply("Autoresponse added");
 		} catch (e) {
-			ctx.interaction.reply("Something went wrong when adding autoresposne.");
+			interaction.reply("Something went wrong when adding autoresposne.");
 		}
 	},
 };

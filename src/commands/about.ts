@@ -6,8 +6,8 @@ let newCommand: Command = {
 		.setName("about")
 		.setDescription("Get info about the bot")
 		.toJSON(),
-	execute(ctx) {
-		ctx.interaction.reply(
+	execute(interaction) {
+		interaction.reply(
 			"Hello, I'm **FjordFursBot**!\n" +
 				"By KHTangent\n" +
 				"Licensed under the MIT License.\n" +

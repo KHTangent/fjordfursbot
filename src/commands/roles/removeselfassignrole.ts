@@ -15,19 +15,19 @@ let newCommand: Command = {
 				.setRequired(true)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		var roleName = ctx.interaction.options
+	async execute(interaction) {
+		var roleName = interaction.options
 			.getString("role", true)
 			.toLowerCase()
 			.trim();
 		const removed = await SelfAssignRoles.remove(
-			ctx.interaction.guild!.id,
+			interaction.guild!.id,
 			roleName
 		);
 		if (removed) {
-			ctx.interaction.reply("Role removed from self-assignable roles.");
+			interaction.reply("Role removed from self-assignable roles.");
 		} else {
-			ctx.interaction.reply("Role is not self-assignable");
+			interaction.reply("Role is not self-assignable");
 		}
 	},
 };

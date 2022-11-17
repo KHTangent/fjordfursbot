@@ -141,9 +141,9 @@ let newCommand: Command = {
 				.setRequired(false)
 		)
 		.toJSON(),
-	execute(ctx) {
-		let count = ctx.interaction.options.getInteger("amount", true);
-		const startWithAnimal = ctx.interaction.options.getBoolean("animal");
+	execute(interaction) {
+		let count = interaction.options.getInteger("amount", true);
+		const startWithAnimal = interaction.options.getBoolean("animal");
 		let reply = "Your emojis: ";
 		if (startWithAnimal) {
 			reply +=
@@ -153,7 +153,7 @@ let newCommand: Command = {
 		for (let i = 0; i < count; ++i) {
 			reply += Emoji.random().emoji;
 		}
-		ctx.interaction.reply(reply);
+		interaction.reply(reply);
 	},
 };
 

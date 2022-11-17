@@ -14,27 +14,27 @@ let newCommand: Command = {
 				.setRequired(true)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const roleName = ctx.interaction.options
+	async execute(interaction) {
+		const roleName = interaction.options
 			.getString("role", true)
 			.toLowerCase()
 			.trim();
 		const roleId = await SelfAssignRoles.getId(
-			ctx.interaction.guild!.id,
+			interaction.guild!.id,
 			roleName
 		);
 		if (roleId == "") {
-			ctx.interaction.reply("Role not found");
+			interaction.reply("Role not found");
 			return;
 		}
 		try {
-			(ctx.interaction.member!.roles as Discord.GuildMemberRoleManager).add(
+			(interaction.member!.roles as Discord.GuildMemberRoleManager).add(
 				roleId,
 				"Requested"
 			);
-			ctx.interaction.reply("Role added");
+			interaction.reply("Role added");
 		} catch (e) {
-			ctx.interaction.reply("Something went wrong while giving you the role.");
+			interaction.reply("Something went wrong while giving you the role.");
 		}
 	},
 };

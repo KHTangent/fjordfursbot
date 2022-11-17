@@ -18,13 +18,13 @@ let newCommand: Command = {
 				.setRequired(true)
 		)
 		.toJSON(),
-	async execute(ctx) {
-		const date = ctx.interaction.options.getString("date", true);
+	async execute(interaction) {
+		const date = interaction.options.getString("date", true);
 		const birthdaysChannel = ServerConfigs.get(
-			ctx.interaction.guild!.id
+			interaction.guild!.id
 		).birthdaysChannel;
 		if (!birthdaysChannel) {
-			ctx.interaction.reply("Birthdays are not enabled in this server");
+			interaction.reply("Birthdays are not enabled in this server");
 			return;
 		}
 		const match = DATE_REGEX.exec(date);
@@ -32,15 +32,15 @@ let newCommand: Command = {
 			if (date.startsWith("remove")) {
 				try {
 					await Birthdays.delete(
-						ctx.interaction.guild!.id,
-						ctx.interaction.user.id
+						interaction.guild!.id,
+						interaction.user.id
 					);
-					ctx.interaction.reply("Birthday removed");
+					interaction.reply("Birthday removed");
 				} catch (_: unknown) {
-					ctx.interaction.reply("Something went wrong when deleting birthday");
+					interaction.reply("Something went wrong when deleting birthday");
 				}
 			} else {
-				ctx.interaction.reply(
+				interaction.reply(
 					"Invalid date provided.\n" +
 						`Usage: \`/remember-birthday dd.mm.yyyy\`\n` +
 						`Example if your birthday is the 2nd of April 1998: ` +
@@ -54,27 +54,27 @@ let newCommand: Command = {
 		const month = parseInt(match.groups.month);
 		const year = parseInt(match.groups.year);
 		if (!simpleDateValidator(day, month, year)) {
-			ctx.interaction.reply("That date is not valid");
+			interaction.reply("That date is not valid");
 			return;
 		}
 		try {
 			await Birthdays.delete(
-				ctx.interaction.guild!.id,
-				ctx.interaction.user.id
+				interaction.guild!.id,
+				interaction.user.id
 			);
 			await Birthdays.add({
-				guildId: ctx.interaction.guild!.id,
-				userId: ctx.interaction.user.id,
+				guildId: interaction.guild!.id,
+				userId: interaction.user.id,
 				day,
 				month,
 				year,
 			});
-			ctx.interaction.reply(
+			interaction.reply(
 				"Your birthday has been set to the " +
 					simpleDateString(day, month, year)
 			);
 		} catch (_: unknown) {
-			ctx.interaction.reply("Something went wrong while saving your birthday");
+			interaction.reply("Something went wrong while saving your birthday");
 		}
 	},
 };

@@ -8,14 +8,14 @@ let newCommand: Command = {
 		.setDescription("Get a list of self-assignable roles")
 		.setDMPermission(false)
 		.toJSON(),
-	async execute(ctx) {
-		const roles = await SelfAssignRoles.list(ctx.interaction.guild!.id);
+	async execute(interaction) {
+		const roles = await SelfAssignRoles.list(interaction.guild!.id);
 		if (roles.length === 0) {
-			ctx.interaction.reply("This server has no self-assignable roles");
+			interaction.reply("This server has no self-assignable roles");
 		} else {
 			var listMessage =
 				"List of self-assignable roles: ```" + roles.join(", ") + "```";
-			ctx.interaction.reply(listMessage);
+			interaction.reply(listMessage);
 		}
 	},
 };
