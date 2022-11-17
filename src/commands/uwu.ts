@@ -11,10 +11,11 @@ let newCommand: Command = {
 				.setRequired(false)
 				.setName("text")
 				.setDescription("Text to uwuize. If blank, use previous message")
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	async execute(ctx) {
-		let toUwuize = "";
 		const textParam = ctx.interaction.options.getString("text", false);
+		let toUwuize = "";
 		if (textParam === null) {
 			try {
 				var messages = await ctx.interaction.channel!.messages.fetch({

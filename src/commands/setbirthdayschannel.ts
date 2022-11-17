@@ -14,7 +14,8 @@ let newCommand: Command = {
 				.setDescription("Birthday channel")
 				.setRequired(true)
 				.addChannelTypes(Discord.ChannelType.GuildText)
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	async execute(ctx) {
 		const channel = ctx.interaction.options.getChannel("channel", true);
 		const config = ServerConfigs.get(ctx.interaction.guild!.id);

@@ -7,7 +7,8 @@ let newCommand: Command = {
 		.setName("listautoresponses")
 		.setDescription("Get a list of autoresponses")
 		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
-		.setDMPermission(false),
+		.setDMPermission(false)
+		.toJSON(),
 	async execute(ctx) {
 		const list = AutoResponses.list(ctx.interaction.guild!.id).map(
 			(e) => (e.exact ? "e | " : "a | ") + e.trigger

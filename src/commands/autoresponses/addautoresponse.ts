@@ -32,10 +32,11 @@ let newCommand: Command = {
 		)
 		.addStringOption((option) =>
 			option
-				.setName("response")
+				.setName("reply")
 				.setDescription("What the bot should respond with")
 				.setRequired(true)
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	async execute(ctx) {
 		const trigger = ctx.interaction.options.getString("trigger", true);
 		const exact = ctx.interaction.options.getString("exact", true) === "exact";

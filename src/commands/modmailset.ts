@@ -32,7 +32,8 @@ let newCommand: Command = {
 						.setMaxLength(25)
 						.setRequired(true)
 				)
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	async execute(ctx) {
 		const subcommand = ctx.interaction.options.getSubcommand();
 		if (subcommand === "channel") {

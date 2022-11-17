@@ -139,7 +139,8 @@ let newCommand: Command = {
 				.setName("animal")
 				.setDescription("Wether the first emoji should be an animal")
 				.setRequired(false)
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	execute(ctx) {
 		let count = ctx.interaction.options.getInteger("amount", true);
 		const startWithAnimal = ctx.interaction.options.getBoolean("animal");

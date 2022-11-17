@@ -16,8 +16,10 @@ let newCommand: Command = {
 				.setName("date")
 				.setDescription('Your bithday, in dd.mm.yyyy, or "remove" to remove')
 				.setRequired(true)
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	async execute(ctx) {
+		const date = ctx.interaction.options.getString("date", true);
 		const birthdaysChannel = ServerConfigs.get(
 			ctx.interaction.guild!.id
 		).birthdaysChannel;
@@ -25,10 +27,9 @@ let newCommand: Command = {
 			ctx.interaction.reply("Birthdays are not enabled in this server");
 			return;
 		}
-		const input = ctx.interaction.options.getString("date", true);
-		const match = DATE_REGEX.exec(input);
+		const match = DATE_REGEX.exec(date);
 		if (!match || !match.groups) {
-			if (input.startsWith("remove")) {
+			if (date.startsWith("remove")) {
 				try {
 					await Birthdays.delete(
 						ctx.interaction.guild!.id,

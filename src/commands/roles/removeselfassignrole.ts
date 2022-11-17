@@ -1,19 +1,33 @@
+import * as Discord from "discord.js";
 import { SelfAssignRoles } from "../../db/SelfAssignRoles";
 import { Command } from "../../interfaces/Command";
 
 let newCommand: Command = {
-	name: "removeselfassignrole",
-	guildOnly: true,
-	adminOnly: true,
+	command: new Discord.SlashCommandBuilder()
+		.setName("removeselfassignrole")
+		.setDescription("Remove a role from the self-assignable role list")
+		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+		.setDMPermission(false)
+		.addStringOption((option) =>
+			option
+				.setName("role")
+				.setDescription("Name of role to remove from self-assignable list")
+				.setRequired(true)
+		)
+		.toJSON(),
 	async execute(ctx) {
-		var roleName = ctx.msg.content
-			.substring(`${ctx.botConfig.prefix}removeselfassignrole`.length + 1)
+		var roleName = ctx.interaction.options
+			.getString("role", true)
+			.toLowerCase()
 			.trim();
-		const removed = await SelfAssignRoles.remove(ctx.msg.guild!.id, roleName);
+		const removed = await SelfAssignRoles.remove(
+			ctx.interaction.guild!.id,
+			roleName
+		);
 		if (removed) {
-			ctx.msg.channel.send("Role removed from self-assignable roles.");
+			ctx.interaction.reply("Role removed from self-assignable roles.");
 		} else {
-			ctx.msg.channel.send("Role is not self-assignable");
+			ctx.interaction.reply("Role is not self-assignable");
 		}
 	},
 };

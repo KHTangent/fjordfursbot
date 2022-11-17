@@ -1,7 +1,7 @@
 import * as Discord from "discord.js";
 
 export interface Command {
-	command: Discord.SlashCommandBuilder;
+	command: Discord.RESTPostAPIChatInputApplicationCommandsJSONBody;
 	execute(ctx: CommandContext): void;
 }
 

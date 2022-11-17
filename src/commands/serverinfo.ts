@@ -5,7 +5,8 @@ let newCommand: Command = {
 	command: new Discord.SlashCommandBuilder()
 		.setName("serverinfo")
 		.setDescription("Get info about the server")
-		.setDMPermission(false) as Discord.SlashCommandBuilder,
+		.setDMPermission(false)
+		.toJSON(),
 	async execute(ctx) {
 		let members: Discord.Collection<string, Discord.GuildMember>;
 		try {

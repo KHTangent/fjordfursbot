@@ -22,7 +22,8 @@ let newCommand: Command = {
 				.setDescription("The message to be sent to server staff")
 				.setRequired(true)
 				.setMaxLength(2000)
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	async execute(ctx) {
 		const serverName = ctx.interaction.options.getString("server", true);
 		const message = ctx.interaction.options.getString("message", true);

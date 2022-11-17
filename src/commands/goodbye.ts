@@ -32,7 +32,8 @@ let newCommand: Command = {
 						.setDescription("Goodbye message content")
 						.setRequired(true)
 				)
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	async execute(ctx) {
 		const subcommand = ctx.interaction.options.getSubcommand();
 		if (subcommand === "channel") {
@@ -61,6 +62,8 @@ let newCommand: Command = {
 					ctx.interaction.reply("Error saving: " + e.message);
 				}
 			}
+		} else {
+			ctx.interaction.reply("Unknown subcommand");
 		}
 	},
 };

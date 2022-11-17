@@ -16,7 +16,8 @@ import { handleBirthdays } from "./BirthdayHandler";
 	let commandPaths = new Array<string>();
 	walkDirSync(pathJoin(__dirname, "commands"), commandPaths);
 	commandPaths = commandPaths.filter((e) => e.endsWith(".js"));
-	const commandBuilders = new Array<Discord.SlashCommandBuilder>();
+	const commandBuilders =
+		new Array<Discord.RESTPostAPIChatInputApplicationCommandsJSONBody>();
 	for (let commandFile of commandPaths) {
 		const command: Command = require(commandFile);
 		loadedCommands.set(command.command.name, command);
@@ -40,7 +41,7 @@ import { handleBirthdays } from "./BirthdayHandler";
 	console.log("Registering slash commands...");
 	const rest = new Discord.REST({ version: "10" }).setToken(config.token);
 	await rest.put(Discord.Routes.applicationCommands(config.clientId), {
-		body: commandBuilders.map((c) => c.toJSON()),
+		body: commandBuilders,
 	});
 	console.log("Commands have been registered");
 

@@ -13,7 +13,8 @@ let newCommand: Command = {
 				.setName("trigger")
 				.setDescription("Trigger for autoresponse to remove")
 				.setRequired(true)
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	async execute(ctx) {
 		const trigger = ctx.interaction.options.getString("trigger", true);
 		try {

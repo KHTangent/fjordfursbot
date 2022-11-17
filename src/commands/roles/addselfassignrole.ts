@@ -1,44 +1,42 @@
+import * as Discord from "discord.js";
 import { SelfAssignRoles } from "../../db/SelfAssignRoles";
 import { Command } from "../../interfaces/Command";
 
 let newCommand: Command = {
-	name: "addselfassignrole",
-	adminOnly: true,
-	guildOnly: true,
+	command: new Discord.SlashCommandBuilder()
+		.setName("addselfassignrole")
+		.setDescription("Set a new role as self-assignable")
+		.setDefaultMemberPermissions(Discord.PermissionFlagsBits.Administrator)
+		.setDMPermission(false)
+		.addRoleOption((option) =>
+			option
+				.setName("role")
+				.setDescription("Role to make self-assignable")
+				.setRequired(true)
+		)
+		.toJSON(),
 	async execute(ctx) {
-		var roleId = ctx.msg.content
-			.substring(`${ctx.botConfig.prefix}addselfassignrole`.length + 1)
-			.trim();
-		let role;
-		try {
-			role = await ctx.msg.guild!.roles.fetch(roleId);
-		} catch (e) {
-			ctx.msg.channel.send("Error getting role with id " + roleId);
-		}
-		if (!role) {
-			ctx.msg.channel.send("Error getting role with id " + roleId);
-			return;
-		}
+		const role = ctx.interaction.options.getRole("role", true);
 		// Verify that the role isn't there already
 		if (
 			(await SelfAssignRoles.getId(
-				ctx.msg.guild!.id,
+				ctx.interaction.guild!.id,
 				role.name.toLowerCase()
 			)) != ""
 		) {
-			ctx.msg.channel.send("This role has already been added.");
+			ctx.interaction.reply("This role has already been added.");
 			return;
 		}
 		try {
-			await SelfAssignRoles.add(ctx.msg.guild!.id, {
+			await SelfAssignRoles.add(ctx.interaction.guild!.id, {
 				id: role.id,
 				name: role.name.toLowerCase(),
 			});
 		} catch (e) {
-			ctx.msg.channel.send("Error adding self-assignable role");
+			ctx.interaction.reply("Error adding self-assignable role");
 			return;
 		}
-		ctx.msg.channel.send(`Role ${role.name} has been made self-assignable.`);
+		ctx.interaction.reply(`Role ${role.name} has been made self-assignable.`);
 	},
 };
 

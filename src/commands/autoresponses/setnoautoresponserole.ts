@@ -13,7 +13,8 @@ let newCommand: Command = {
 				.setName("role")
 				.setDescription("Role to have autorepsonses muted")
 				.setRequired(false)
-		) as Discord.SlashCommandBuilder,
+		)
+		.toJSON(),
 	async execute(ctx) {
 		const role = ctx.interaction.options.getRole("role", false);
 		const oldConfig = ServerConfigs.get(ctx.interaction.guild!.id);
