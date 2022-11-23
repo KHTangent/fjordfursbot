@@ -3,5 +3,9 @@
 	"local": {
 		"driver": "sqlite",
 		"filename": "data.db"
+	},
+	"docker": {
+		"driver": "sqlite",
+		"filename": "data/data.db"
 	}
 }

@@ -1,0 +1,7 @@
+out/
+node_modules/
+config.json
+servers.json
+data.db
+data/
+.env

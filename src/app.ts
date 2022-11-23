@@ -3,6 +3,7 @@ dotenv.config();
 
 import * as Discord from "discord.js";
 import { join as pathJoin } from "path";
+import { existsSync } from "fs";
 
 import { ConfigLoader } from "./ConfigLoader";
 import { Command } from "./interfaces/Command";
@@ -33,7 +34,9 @@ import { handleBirthdays } from "./BirthdayHandler";
 	console.log("Loaded bot config.");
 
 	console.log("Creating sqlite3 connection...");
-	await db.connect("data.db");
+	// Support both root directory and data/ to not break setups
+	const dbPath = existsSync("data.db") ? "data.db" : "data/data.db";
+	await db.connect(dbPath);
 	console.log("sqlite3 connection established.");
 
 	console.log("Populating caches...");

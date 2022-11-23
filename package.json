@@ -1,6 +1,6 @@
 {
 	"name": "fjordfursbot",
-	"version": "0.8.1",
+	"version": "0.8.2",
 	"description": "A Discord bot for the FjordFurs server",
 	"main": "out/app.js",
 	"scripts": {
@@ -9,6 +9,7 @@
 		"run": "node out/app.js",
 		"start": "npm run-script build && npm run-script run",
 		"migrate": "db-migrate up",
+		"dockerrun": "db-migrate up --env docker && node out/app.js",
 		"format": "prettier --write \"src/**/*\""
 	},
 	"repository": {
