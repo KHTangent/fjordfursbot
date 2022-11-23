@@ -1,10 +1,10 @@
-import { readFileSync, statSync } from "fs";
+import { readFileSync, existsSync } from "fs";
 
 export class ConfigLoader {
 	static getBotConfig(): BotConfig {
 		const jsonPath = __dirname + "/../config.json";
 		let json: any = {};
-		if (statSync(jsonPath).isFile()) {
+		if (existsSync(jsonPath)) {
 			json = JSON.parse(readFileSync(jsonPath).toString());
 		}
 		const clientId = process.env["CLIENT_ID"] || json["clientId"];
