@@ -58,6 +58,9 @@ Autoresponses are replies the bot makes to specific words or phrases. A user can
 6. Run database migrations: `db-migrate up`
 7. Compile and run the bot with `npm start` from the project directory
 
-### Upgrading
+### Configuring with environment variables
+It's also possible to set bot token and client ID using the `TOKEN` and `CLIENT_ID` environment variables. You can either set them in your shell, or add them to a `.env` file in the root directory.
+
+## Upgrading
 Remember to re-run `db-migrate` when a new update has arrived to update the database schema.
 If other errors happen, try deleting the `out/` directory, and run again.

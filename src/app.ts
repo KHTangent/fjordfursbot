@@ -1,3 +1,6 @@
+import * as dotenv from "dotenv";
+dotenv.config();
+
 import * as Discord from "discord.js";
 import { join as pathJoin } from "path";
 
