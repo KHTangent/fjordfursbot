@@ -16,7 +16,7 @@ let newCommand: Command = {
 		)
 		.toJSON(),
 	async execute(interaction) {
-		const trigger = interaction.options.getString("trigger", true);
+		const trigger = interaction.options.getString("trigger", true).replace(/\\n/g, "\n");
 		try {
 			var removed = await AutoResponses.remove(
 				interaction.guild!.id,

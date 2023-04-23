@@ -49,7 +49,7 @@ let newCommand: Command = {
 				}
 			}
 		} else if (subcommand === "message") {
-			const message = interaction.options.getString("message", true);
+			const message = interaction.options.getString("message", true).replace(/\\n/g, "\n");
 			const oldConfig = ServerConfigs.get(interaction.guild!.id);
 			oldConfig.welcomeMessage = message;
 			try {
