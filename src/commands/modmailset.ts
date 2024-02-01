@@ -42,9 +42,7 @@ let newCommand: Command = {
 			config.modmailChannelId = channel.id;
 			try {
 				await ServerConfigs.set(interaction.guild!.id, config);
-				interaction.reply(
-					`Modmail message channel set to <#${channel.id}>`
-				);
+				interaction.reply(`Modmail message channel set to <#${channel.id}>`);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
 					interaction.reply("Error saving: " + e.message);

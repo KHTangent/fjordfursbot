@@ -19,10 +19,7 @@ let newCommand: Command = {
 			.getString("role", true)
 			.toLowerCase()
 			.trim();
-		const roleId = await SelfAssignRoles.getId(
-			interaction.guild!.id,
-			roleName
-		);
+		const roleId = await SelfAssignRoles.getId(interaction.guild!.id, roleName);
 		if (roleId == "") {
 			interaction.reply("Role not found");
 			return;

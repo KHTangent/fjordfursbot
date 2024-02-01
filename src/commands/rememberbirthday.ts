@@ -31,10 +31,7 @@ let newCommand: Command = {
 		if (!match || !match.groups) {
 			if (date.startsWith("remove")) {
 				try {
-					await Birthdays.delete(
-						interaction.guild!.id,
-						interaction.user.id
-					);
+					await Birthdays.delete(interaction.guild!.id, interaction.user.id);
 					interaction.reply("Birthday removed");
 				} catch (_: unknown) {
 					interaction.reply("Something went wrong when deleting birthday");
@@ -58,10 +55,7 @@ let newCommand: Command = {
 			return;
 		}
 		try {
-			await Birthdays.delete(
-				interaction.guild!.id,
-				interaction.user.id
-			);
+			await Birthdays.delete(interaction.guild!.id, interaction.user.id);
 			await Birthdays.add({
 				guildId: interaction.guild!.id,
 				userId: interaction.user.id,

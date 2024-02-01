@@ -42,16 +42,16 @@ let newCommand: Command = {
 			oldConfig.goodbyeChannelId = channel.id;
 			try {
 				await ServerConfigs.set(interaction.guild!.id, oldConfig);
-				interaction.reply(
-					`Goodbye message channel set to <#${channel.id}>`
-				);
+				interaction.reply(`Goodbye message channel set to <#${channel.id}>`);
 			} catch (e: unknown) {
 				if (e instanceof Error) {
 					interaction.reply("Error saving: " + e.message);
 				}
 			}
 		} else if (subcommand === "message") {
-			const message = interaction.options.getString("message", true).replace(/\\n/g, "\n");
+			const message = interaction.options
+				.getString("message", true)
+				.replace(/\\n/g, "\n");
 			const oldConfig = ServerConfigs.get(interaction.guild!.id);
 			oldConfig.goodbyeMessage = message;
 			try {

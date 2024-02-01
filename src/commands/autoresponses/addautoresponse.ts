@@ -38,9 +38,13 @@ let newCommand: Command = {
 		)
 		.toJSON(),
 	async execute(interaction) {
-		const trigger = interaction.options.getString("trigger", true).replace(/\\n/g, "\n");
+		const trigger = interaction.options
+			.getString("trigger", true)
+			.replace(/\\n/g, "\n");
 		const exact = interaction.options.getString("exact", true) === "exact";
-		const reply = interaction.options.getString("reply", true).replace(/\\n/g, "\n");
+		const reply = interaction.options
+			.getString("reply", true)
+			.replace(/\\n/g, "\n");
 		try {
 			await AutoResponses.add({
 				guildId: interaction.guild!.id,
