@@ -37,11 +37,15 @@ let newCommand: Command = {
 				ServerConfigs.get(gID).modmailChannelId!
 			)) as Discord.TextChannel;
 			channel.send(message);
-			interaction.reply("Modmail has been sent");
+			interaction.reply({
+				content: "Modmail has been sent",
+				ephemeral: true,
+			});
 		} catch (e) {
-			interaction.reply(
-				"Could not send modmail, please contact the server owner."
-			);
+			interaction.reply({
+				content: "Could not send modmail, please contact the server owner.",
+				ephemeral: true,
+			});
 		}
 	},
 };
