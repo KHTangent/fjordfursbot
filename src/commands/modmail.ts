@@ -29,7 +29,10 @@ let newCommand: Command = {
 		const message = interaction.options.getString("message", true);
 		const gID = ServerConfigs.getIdFromModmailName(serverName);
 		if (!gID || !ServerConfigs.get(gID).modmailChannelId) {
-			interaction.reply("Invalid server name.");
+			interaction.reply({
+				content: "Invalid server name.",
+				ephemeral: true,
+			});
 			return;
 		}
 		try {
